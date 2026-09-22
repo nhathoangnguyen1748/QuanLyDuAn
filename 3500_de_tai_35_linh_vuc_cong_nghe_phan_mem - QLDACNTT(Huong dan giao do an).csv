@@ -1,0 +1,118 @@
+H??NG D?N VÀ YÊU C?U ?? ÁN QU?N LÝ D? ÁN CNTT - 8 TU?N,,,,,,,,,
+H?c ph?n,MAN104 - Qu?n lý d? án công ngh? thông tin,Th?i gian,07.09.2026 - 01.11.2026,Quy mô,Nhóm 5 SV; 8 tu?n; 9 bu?i,,,,
+??i t??ng,"SV n?m 4 ngành CNTT, chuyên ngành Công ngh? ph?n m?m",C?n c?,"CLO2-CLO3; ph?m vi, th?i gian, chi phí, ch?t l??ng, nhân s?, truy?n thông, r?i ro, mua s?m, tích h?p",?ánh giá,Quá trình 50%; v?n ?áp ?? án cu?i k? 50%,,,,
+,,,,,,,,,
+1. ?I?U KI?N CH?N VÀ GI?I H?N ?? TÀI,,,,,,,,,
+Ch?n ?? tài,M?i nhóm ch?n 01 mã ?? tài trong danh sách 3.500 ?? tài; không trùng trong cùng l?p; ch? ???c tri?n khai sau khi gi?ng viên duy?t ph?m vi.,"Phi?u ??ng ký: mã ?? tài, tên nhóm, 5 thành viên, vai trò chính, công ngh? d? ki?n",Tu?n 1,PM + BA/PO,GV duy?t: phù h?p 8 tu?n và có d? li?u/nghi?p v? kh? thi,,,,
+Gi?i h?n ph?m vi,"?u tiên MVP hoàn ch?nh thay vì nhi?u ch?c n?ng d? dang. Ch?n 2-4 quy trình nghi?p v? lõi, có ??u vào, x? lý, tr?ng thái và ??u ra rõ ràng.",Scope statement; in-scope/out-of-scope; tiêu chí ch?p nh?n; WBS,Tu?n 1,C? nhóm,"Không ch?n ph?m vi c?p qu?c gia, lõi ngân hàng, b?nh án th?t ho?c d? li?u nh?y c?m ch?a ?n danh",,,,
+M?c Trung bình,T?i thi?u 3 actor; 8-10 use case; 6-8 b?ng d? li?u; 2 quy trình lõi; ??ng nh?p/RBAC; 1 dashboard; 1 báo cáo; >=25 test case; tri?n khai b?n demo.,"SRS, ERD, prototype, source, test report, URL demo",Tu?n 8,C? nhóm,Phù h?p nhóm k? n?ng trung bình; ?u tiên ch?t l??ng và hoàn thi?n,,,,
+M?c Khá,T?i thi?u 4 actor; 10-14 use case; 8-12 b?ng; 3 quy trình lõi; phân quy?n chi ti?t; 2 báo cáo; tích h?p 1 d?ch v?; >=35 test case; CI/CD ho?c deploy cloud.,"SRS, ERD, API spec, source, test report, URL demo",Tu?n 8,C? nhóm,"Có x? lý ngo?i l?, nh?t ký thao tác và d? li?u m?u h?p lý",,,,
+M?c Khó,"T?i thi?u 5 actor; 14-18 use case; 10-15 b?ng; 4 quy trình; tích h?p ngoài/realtime ho?c x? lý nâng cao; 3 báo cáo; >=45 test case; logging, backup và deploy.","H? s? ki?n trúc, API/integration, source, test và v?n hành",Tu?n 8,C? nhóm,Ch? ch?n khi nhóm ch?ng minh n?ng l?c và k? ho?ch gi?m r?i ro,,,,
+S?n ph?m lõi,"B?t bu?c có Frontend, Backend/API, Database, xác th?c, phân quy?n, CRUD có ki?m tra d? li?u, tìm ki?m/l?c, dashboard/báo cáo, ki?m th? và tri?n khai demo.",B?n ch?y ???c v?i d? li?u m?u; tài kho?n demo theo vai trò,Tu?n 7-8,Dev team,"Không ch?p nh?n ch? làm giao di?n, prototype ho?c notebook r?i r?c",,,,
+AI/ML m? r?ng,"Ch? là ?i?m c?ng sau khi MVP ??t. Ph?i mô t? d? li?u, cách ?ánh giá, gi?i h?n và không dùng AI ?? thay th? toàn b? phân tích/thi?t k? c?a nhóm.",Dataset m?u; mô t? mô hình; metric; màn hình tích h?p,Tu?n 7-8,Thành viên ph? trách,"?ng d?ng phù h?p nghi?p v?, có gi?i thích k?t qu?",,,,
+2. PHÂN CÔNG NHÓM 5 SINH VIÊN,,,,,,,,,
+Mô hình vai trò,5 SV (vai trò chính): 1 PM/Scrum Master kiêm Integration; 2 BA/PO; 3 UI-UX + Frontend; 4 Backend/API + DevOps; 5 Database + QA/Tester. M?i SV có nhi?m v? ph? và minh ch?ng cá nhân.,RACI; backlog theo ng??i; Git commits; issue/ticket; timesheet; biên b?n h?p,Tu?n 1-8,PM qu?n lý,Không có thành viên ch? ??ng tên ho?c ch? làm slide,,,,
+SV1,"PM/Scrum Master + Integration: l?p k? ho?ch, WBS/Gantt, theo dõi ti?n ??/chi phí, qu?n lý thay ??i, tích h?p và báo cáo tu?n.",Project plan; status report; change log; release checklist,Hàng tu?n,SV1,Duy trì baseline và x? lý chênh l?ch,,,,
+SV2,"BA/PO: kh?o sát, stakeholder, yêu c?u, user story/use case, acceptance criteria, ?u tiên backlog và nghi?m thu nghi?p v?.",SRS; backlog; use case; biên b?n xác nh?n yêu c?u,Tu?n 1-8,SV2,Yêu c?u truy v?t ???c ??n ch?c n?ng và test case,,,,
+SV3,"UI/UX + Frontend: user flow, wireframe/prototype, design system, giao di?n responsive và tích h?p API phía ng??i dùng.",Prototype; source frontend; UI checklist,Tu?n 2-7,SV3,"Giao di?n nh?t quán, d? dùng, x? lý l?i và tr?ng thái",,,,
+SV4,"Backend/API + DevOps: ki?n trúc, API, xác th?c/phân quy?n, business logic, CI/CD, môi tr??ng và tri?n khai.",API spec; source backend; pipeline/deploy guide,Tu?n 2-8,SV4,"API có validation, error handling, security c? b?n",,,,
+SV5,"Database + QA/Tester: mô hình d? li?u, migration/seed, truy v?n/báo cáo, test plan, test case, defect log và ki?m th? h?i quy.",ERD; data dictionary; test report; defect log,Tu?n 2-8,SV5,CSDL chu?n hóa h?p lý; test bao ph? yêu c?u lõi,,,,
+3. H? S? QU?N LÝ D? ÁN B?T BU?C,,,,,,,,,
+Tích h?p d? án,Project Charter; m?c tiêu SMART; Project Management Plan; baseline; change request/log; biên b?n ?óng d? án và lessons learned.,01 b? h? s? tích h?p có phiên b?n,Tu?n 1-8,PM,"M?i thay ??i ph?m vi/ti?n ?? ph?i có lý do, tác ??ng và quy?t ??nh",,,,
+Qu?n lý ph?m vi,"Stakeholder needs, SRS/user story, scope statement, in/out scope, WBS, WBS dictionary, requirement traceability và nghi?m thu.",SRS + WBS + ma tr?n truy v?t,Tu?n 1-2,BA/PO + PM,100% yêu c?u ?u tiên cao có acceptance criteria,,,,
+Qu?n lý th?i gian,"Danh sách công vi?c, ph? thu?c, ??c l??ng, Gantt/PERT, critical path, milestone, baseline và c?p nh?t planned-versus-actual m?i tu?n.","Gantt có ng??i ph? trách, ngày b?t ??u/k?t thúc, % hoàn thành",Tu?n 1-8,PM,Không ?? công vi?c quá 5 ngày mà không có ??u ra ki?m ch?ng,,,,
+Qu?n lý chi phí,"??c l??ng effort theo gi?/ng??i; ??n giá gi? ??nh; chi phí cloud, domain, công c?, thi?t b?; budget baseline; actual cost và variance.",Cost estimate + budget + b?ng theo dõi chênh l?ch,Tu?n 2-8,PM,Nêu rõ gi? ??nh; k? c? công c? mi?n phí v?n ghi chi phí 0 và ngu?n,,,,
+Qu?n lý ch?t l??ng,"Quality plan, Definition of Done, coding convention, review checklist, test strategy, tiêu chí hi?u n?ng/b?o m?t c? b?n, defect và corrective action.",Quality plan + test plan + defect log,Tu?n 2-8,QA + c? nhóm,Không còn l?i Critical/High ch?a x? lý khi b?o v?,,,,
+Qu?n lý nhân s?,"RACI, k? n?ng/n?ng l?c, capacity, phân b? công vi?c, timesheet, peer review, k? ho?ch thay th? và x? lý xung ??t.",RACI + workload/timesheet + ?ánh giá chéo,Tu?n 1-8,PM,Kh?i l??ng h?p lý; m?i thành viên có ??u ra ??c l?p,,,,
+Qu?n lý truy?n thông,"Stakeholder register, communication matrix, l?ch h?p, kênh trao ??i, weekly status, meeting minutes, quy?t ??nh và escalation.",Biên b?n h?p hàng tu?n + status report,Hàng tu?n,PM/Th? ký luân phiên,Ít nh?t 01 cu?c h?p nhóm/tu?n; quy?t ??nh quan tr?ng ???c ghi nh?n,,,,
+Qu?n lý r?i ro,"Risk register t?i thi?u 10 r?i ro; xác su?t, tác ??ng, ?i?m P×I, owner, trigger, response, contingency và c?p nh?t tr?ng thái.",Risk matrix + risk register,Tu?n 2-8,PM + owner,"Có r?i ro k? thu?t, yêu c?u, ti?n ??, nhân s?, d? li?u và tri?n khai",,,,
+Qu?n lý mua s?m,Make-or-buy; danh sách cloud/API/domain/license/thi?t b?; tiêu chí ch?n nhà cung c?p; ngân sách; ?i?u kho?n s? d?ng và ph??ng án thay th?.,Procurement plan; supplier/tool evaluation,Tu?n 3-6,PM + DevOps,N?u không mua v?n ph?i phân tích quy?t ??nh dùng gi?i pháp mi?n phí/mã ngu?n m?,,,,
+Giám sát và ki?m soát,"Backlog/board, planned vs actual, milestone review, KPI ti?n ??/ch?t l??ng, issue log, change control và hành ??ng kh?c ph?c.",?nh/export board + báo cáo tu?n + issue/change log,Hàng tu?n,PM + c? nhóm,Báo cáo trung th?c; chênh l?ch ph?i có nguyên nhân và k? ho?ch x? lý,,,,
+Tóm t?t h? s?,B?t bu?c: Charter/PMP; SRS + scope/WBS; Gantt/baseline; effort-cost budget; RACI/timesheet; quality-test-defect; communication/minutes; risk register; procurement; change log; closure/lessons learned.,N?p chung trong th? m?c /docs c?a repository,Tu?n 8,C? nhóm,"H? s? có phiên b?n, ngày c?p nh?t và ng??i ch?u trách nhi?m",,,,
+4. TI?N ?? 8 TU?N - 9 BU?I,,,,,,,,,
+M?c chung,Tu?n 1: 07.09–13.09.2026; Tu?n 2: 14.09–20.09.2026; Tu?n 3: 21.09–27.09.2026; Tu?n 4: 28.09–04.10.2026; Tu?n 5: 05.10–11.10.2026; Tu?n 6: 12.10–18.10.2026; Tu?n 7: 19.10–25.10.2026; Tu?n 8: 26.10–01.11.2026.,Bu?i 1-8: h??ng d?n/ki?m tra theo tu?n; Bu?i 9: b?o v? cu?i k? trong Tu?n 8 theo l?ch GV,07.09-01.11.2026,GV + các nhóm,N?p ?úng m?c; tr? ph?i có change request ???c duy?t,N?I DUNG TH?O LU?N / BÀI ??NG NHÓM,,,
+Tu?n 1 / Bu?i 1,"Kh?i ??ng, ch?n ?? tài, kh?o sát, Charter, stakeholder, phân vai, scope và backlog ban ??u.",Phi?u ??ng ký + Charter + RACI + backlog,13.09.2026,PM/BA,Gate 1: ?? tài và ph?m vi ???c GV duy?t,"TH?O LU?N NHÓM – BU?I 1: KH?I ??NG D? ÁN
+
+M?i nhóm t?o 01 bài ??ng tr??c 23:59 ngày 13.09.2026, g?m:
+1. Mã và tên ?? tài; v?n ?? c?n gi?i quy?t; ??i t??ng s? d?ng chính.
+2. Danh sách 5 thành viên, nhóm tr??ng và vai trò d? ki?n c?a t?ng SV.
+3. M?c tiêu SMART; 2–4 quy trình nghi?p v? lõi; ph?m vi trong và ngoài d? án.
+4. Công ngh? d? ki?n, ngu?n d? li?u, khó kh?n và r?i ro ban ??u.
+5. K? ho?ch công vi?c Tu?n 1 và liên k?t th? m?c/repository c?a nhóm.
+
+Minh ch?ng ?ính kèm: Phi?u ??ng ký ?? tài, Project Charter v0.1, RACI và backlog ban ??u.
+
+Yêu c?u t??ng tác: m?i thành viên ph?n h?i ít nh?t 01 ý ki?n trong bài nhóm; nhóm góp ý cho ít nh?t 01 nhóm khác. GV ph?n h?i và duy?t ?? tài/ph?m vi tr?c ti?p trên bài ??ng.",,,
+Tu?n 2 / Bu?i 2,"Hoàn t?t SRS, use case/user story, WBS, Gantt baseline, effort/cost, risk register v1, UI flow và ERD v1.",SRS v1 + WBS/Gantt + budget + risk v1 + prototype/ERD,20.09.2026,C? nhóm,Gate 2: k? ho?ch kh? thi và truy v?t yêu c?u,"TH?O LU?N NHÓM – BU?I 2: PH?M VI VÀ K? HO?CH
+
+Nhóm trình bày v?n ??, stakeholder, m?c tiêu SMART, ph?m vi in-scope/out-of-scope và 8–14 use case/user story ?u tiên.
+
+?ính kèm: SRS v1, WBS, Gantt baseline, d? toán effort/chi phí, Risk Register v1, UI flow và ERD v1.
+
+Câu h?i ph?n bi?n: Ph?m vi nào có nguy c? v??t quá 8 tu?n? Nhóm s? c?t gi?m ch?c n?ng nào tr??c?",,,
+Tu?n 3 / Bu?i 3,"Ki?n trúc, database, API contract, môi tr??ng, ??ng nh?p/RBAC và CRUD lõi; procurement decision.",Architecture/API spec + schema + demo increment 1,27.09.2026,Dev team,Demo ???c lu?ng ??ng nh?p và d? li?u lõi,"TH?O LU?N NHÓM – BU?I 3: KI?N TRÚC VÀ TRI?N KHAI LÕI
+
+Nhóm mô t? ki?n trúc h? th?ng, công ngh?, mô hình d? li?u, API contract, xác th?c/phân quy?n và quy trình nghi?p v? lõi ??u tiên.
+
+?ính kèm: s? ?? ki?n trúc, ERD/schema, API spec, ?nh/video demo ??ng nh?p và CRUD lõi.
+
+Câu h?i ph?n bi?n: Quy?t ??nh k? thu?t nào có r?i ro cao nh?t và ph??ng án thay th? là gì?",,,
+Tu?n 4 / Bu?i 4,"Hoàn thi?n 40-50% nghi?p v?; c?p nh?t ti?n ??, chi phí, r?i ro; test s?m; thuy?t trình gi?a k?.",Demo increment 2 + status report + slide gi?a k?,04.10.2026,C? nhóm,M?c >=50% k? ho?ch; bài nhóm thuy?t trình 10%,"TH?O LU?N NHÓM – BU?I 4: BÁO CÁO GI?A K?
+
+Nhóm báo cáo m?c ?? hoàn thành so v?i baseline, ch?c n?ng ?ã demo, ti?n ?? t?ng thành viên, chi phí th?c t?, l?i và r?i ro hi?n t?i.
+
+?ính kèm: demo increment 2, status report, Gantt planned-versus-actual và slide gi?a k?.
+
+Yêu c?u: nêu rõ nguyên nhân chênh l?ch và hành ??ng ?? ??t t?i thi?u 50% k? ho?ch.",,,
+Tu?n 5 / Bu?i 5,"Hoàn thi?n 70% nghi?p v?, báo cáo/dashboard, tích h?p d?ch v?; quality review và change control.",Demo increment 3 + quality report + change log,11.10.2026,C? nhóm,Các thay ??i ?ã ???c ?ánh giá tác ??ng,"TH?O LU?N NHÓM – BU?I 5: CH?T L??NG VÀ THAY ??I
+
+Nhóm c?p nh?t ti?n ?? 70%, dashboard/báo cáo, tích h?p d?ch v? và các yêu c?u thay ??i phát sinh.
+
+?ính kèm: demo increment 3, quality checklist, change log, test case m?u và k?t qu? review.
+
+Câu h?i ph?n bi?n: Thay ??i nào nên ch?p nh?n ho?c t? ch?i d?a trên tác ??ng ph?m vi, th?i gian và ch?t l??ng?",,,
+Tu?n 6 / Bu?i 6,Feature complete; unit/integration/system test; s?a l?i; ki?m tra b?o m?t/hi?u n?ng c? b?n; c?p nh?t tài li?u.,Release candidate 1 + test/defect report,18.10.2026,QA + Dev,100% ch?c n?ng ?u tiên cao ?ã code; không còn l?i Critical,"TH?O LU?N NHÓM – BU?I 6: KI?M TH? VÀ QU?N LÝ L?I
+
+Nhóm báo cáo tr?ng thái feature complete, ph?m vi unit/integration/system test, s? l??ng test pass/fail và l?i theo m?c ??.
+
+?ính kèm: Release Candidate 1, test report, defect log và b?ng ch?ng s?a l?i.
+
+Yêu c?u: phân công owner, th?i h?n x? lý và không ?? l?i Critical ch?a có ph??ng án.",,,
+Tu?n 7 / Bu?i 7,"UAT, regression, deploy demo, d? li?u m?u, backup/restore, t?i ?u UX; ch?t báo cáo và video.",Release candidate 2 + URL demo + UAT + draft report,25.10.2026,C? nhóm,Gate 3: s?n sàng b?o v?,"TH?O LU?N NHÓM – BU?I 7: UAT VÀ S?N SÀNG B?O V?
+
+Nhóm trình bày k?t qu? UAT, regression, deploy demo, d? li?u m?u, tài kho?n theo vai trò, backup/restore và tình tr?ng tài li?u.
+
+?ính kèm: URL demo, Release Candidate 2, UAT report, draft báo cáo và k?ch b?n demo.
+
+Câu h?i ph?n bi?n: N?u h? th?ng l?i khi b?o v?, nhóm có ph??ng án d? phòng nào?",,,
+Tu?n 8 / Bu?i 8-9,?óng d? án; n?p ?? h? s?/source; demo; trình bày; ph?n bi?n/v?n ?áp cá nhân; lessons learned.,Final release + h? s? + slide + video + biên b?n ?óng d? án,26.10-01.11.2026,C? nhóm,M?i SV tr? l?i ph?n vi?c và ki?n th?c qu?n lý d? án,"TH?O LU?N NHÓM – BU?I 8–9: ?ÓNG D? ÁN VÀ B?O V?
+
+Nhóm t?ng k?t k?t qu? so v?i m?c tiêu, ph?m vi baseline, ti?n ??, chi phí, ch?t l??ng, r?i ro, ?óng góp t?ng thành viên và lessons learned.
+
+?ính kèm: Final release, repository, h? s? /docs, báo cáo, slide, video, biên b?n ?óng d? án và minh ch?ng cá nhân.
+
+M?i SV ??ng ph?n vi?c chính, liên k?t commit/ticket và 2 bài h?c rút ra; chu?n b? tr? l?i v?n ?áp cá nhân.",,,
+5. S?N PH?M N?P CU?I K?,,,,,,,,,
+Repository,"GitHub/GitLab có README, h??ng d?n cài ??t, c?u trúc nhánh, issue/milestone và l?ch s? commit c?a t?ng thành viên.",URL repository và b?n source ?óng gói,Tr??c b?o v?,PM/DevOps,GV truy c?p ???c; không n?p source m?t l?ch s?,,,,
+S?n ph?m ch?y,?ng d?ng ?ã deploy ho?c cài ???c; có d? li?u m?u và tài kho?n theo vai trò; không ph? thu?c máy cá nhân duy nh?t.,URL/b? cài + tài kho?n demo,Tr??c b?o v?,Dev team,Demo end-to-end các quy trình lõi,,,,
+Tài li?u phân tích,"SRS, stakeholder, scope, use case/user story, acceptance criteria, RTM, WBS và UI prototype.",PDF + file ngu?n,Tr??c b?o v?,BA/UIUX,Kh?p v?i phiên b?n ph?n m?m cu?i,,,,
+Tài li?u thi?t k?,"Ki?n trúc, ERD, data dictionary, API spec, deployment diagram và quy?t ??nh k? thu?t quan tr?ng.",PDF + s? ?? ngu?n,Tr??c b?o v?,Dev/DB,Có th? tái t?o h? th?ng t? tài li?u,,,,
+H? s? qu?n lý,"PMP, Gantt baseline/actual, cost, RACI/timesheet, communication, risk, procurement, quality, issue/change log và closure.",B? h? s? /docs,Tr??c b?o v?,PM,??y ?? 9 l?nh v?c h?c ph?n và tích h?p,,,,
+Ki?m th?,"Test plan, test case, test data, traceability, defect log, k?t qu? unit/integration/system/UAT và regression.",Test report + b?ng ch?ng,Tr??c b?o v?,QA,T? l? pass >=90%; 100% test ?u tiên cao pass,,,,
+Báo cáo và trình bày,"Báo cáo cu?i k?, slide 12-18 trang, video demo 5-8 phút; trình bày 15 phút và v?n ?áp 10-15 phút.",PDF/PPTX/video,Bu?i 9,C? nhóm,"Ng?n g?n, có s? li?u k? ho?ch-so-th?c t? và bài h?c",,,,
+Minh ch?ng cá nhân,"B?ng nhi?m v?, commit, ticket, timesheet, ph?n tài li?u ph? trách, t? ?ánh giá và ?ánh giá chéo.",Ph? l?c theo t?ng SV,Bu?i 9,T?ng SV,?i?m cá nhân có th? ?i?u ch?nh theo ?óng góp và v?n ?áp,,,,
+Tóm t?t m?c,Ch?t ?? tài 13.09.2026; k? ho?ch 20.09.2026; demo lõi 27.09.2026; gi?a k? >=50% ngày 04.10.2026; feature complete 18.10.2026; s?n sàng b?o v? 25.10.2026; b?o v? 26.10–01.11.2026.,Theo dõi trên Gantt và board,Hàng tu?n,PM,Không d?n toàn b? công vi?c vào hai tu?n cu?i,,,,
+6. ?I?U KI?N NGHI?M THU VÀ ??T ?? ÁN,,,,,,,,,
+?i?u ki?n ??t,B?t bu?c: ?? tài ???c duy?t; s?n ph?m ch?y end-to-end; >=80% ph?m vi baseline và 100% ch?c n?ng Must-have; ?? h? s? QLDA; test pass >=90%; không còn l?i Critical/High; repo có ?óng góp c?a 5 SV; m?i SV v??t qua v?n ?áp.,Biên b?n nghi?m thu và checklist cu?i k?,Bu?i 9,GV + nhóm,Thi?u m?t ?i?u ki?n b?t bu?c: yêu c?u b? sung ho?c không ??t tùy m?c ??,,,,
+?ánh giá cá nhân,"?i?m nhóm ???c ?i?u ch?nh theo ?óng góp, ch?t l??ng ph?n vi?c, k? lu?t báo cáo, peer review và k?t qu? v?n ?áp t?ng sinh viên.",Commit/ticket/timesheet + v?n ?áp,Bu?i 9,GV,"H? s? cá nhân khuy?n ngh? 0,7-1,1; không v??t ?i?m t?i ?a 10",,,,
+Không ch?p nh?n,Sao chép; mua source; không ch?ng minh quy?n tác gi?; d? li?u cá nhân th?t không ???c phép; demo gi?; tài li?u không kh?p source; m?t ng??i làm thay c? nhóm.,"Ki?m tra repository, l?ch s? và v?n ?áp",Toàn k?,GV,X? lý theo quy ch? h?c v? và liêm chính h?c thu?t,,,,
+7. THANG ?I?M BÁM RUBRIC H?C PH?N,,,,,,,,,
+?ánh giá quá trình 50%,Chuyên c?n và tích c?c 20%; bài t?p v? nhà 10%; ki?m tra t?i l?p 10%; bài nhóm thuy?t trình gi?a k? 10%.,Bài 1-9 và m?c gi?a k?,Trong 8 tu?n,GV,Theo rubric/?? c??ng h?c ph?n,,,,
+?? án cu?i k? 50%,Ch?m v?n ?áp ?? án hoàn thành 100% th?i gian th?c hi?n; quy ??i các tiêu chí chi ti?t d??i ?ây trong ph?n ?i?m ?? án.,S?n ph?m + h? s? + demo + v?n ?áp,Bu?i 9,GV,CLO2 và CLO3,,,,
+Ph?m vi & yêu c?u,"Charter, stakeholder, SRS, scope, WBS, truy v?t và acceptance criteria.",H? s? + v?n ?áp,,,15% ?i?m ?? án,,,,
+"Th?i gian, chi phí & nhân s?","Gantt/baseline/actual, effort-cost variance, RACI, workload, k? lu?t c?p nh?t.",H? s? + s? li?u,,,15% ?i?m ?? án,,,,
+Ch?t l??ng & ki?m th?,"Quality plan, DoD, coverage theo yêu c?u, test result, defect và s?a l?i.",Test report + demo,,,15% ?i?m ?? án,,,,
+"Truy?n thông, r?i ro, mua s?m & tích h?p","Biên b?n/status, risk register, procurement, change control, closure và lessons learned.",H? s? + v?n ?áp,,,15% ?i?m ?? án,,,,
+S?n ph?m ph?n m?m,"Ki?n trúc, database, API, frontend, b?o m?t c? b?n, nghi?p v?, ?? ?n ??nh và tri?n khai.",Source + s?n ph?m ch?y,,,25% ?i?m ?? án,,,,
+"Demo, báo cáo & ph?n bi?n","Trình bày rõ, demo ?úng k?ch b?n, s? li?u k? ho?ch-so-th?c t?, tr? l?i câu h?i.",Slide/video/v?n ?áp,,,10% ?i?m ?? án,,,,
+?óng góp cá nhân,B?ng ch?ng công vi?c và kh? n?ng gi?i thích ph?n ph? trách; ph?i h?p nhóm.,Commit/ticket/timesheet/v?n ?áp,,,5% ?i?m ?? án,,,,
