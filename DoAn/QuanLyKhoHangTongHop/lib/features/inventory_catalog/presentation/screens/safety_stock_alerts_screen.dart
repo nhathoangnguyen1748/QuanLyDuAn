@@ -6,6 +6,8 @@ import 'package:smartstock_admin/core/providers/warehouse_providers.dart';
 import 'package:smartstock_admin/core/utils/currency_formatter.dart';
 import 'package:smartstock_admin/core/utils/date_formatter.dart';
 import 'package:smartstock_admin/features/operations_stock_in/presentation/screens/create_stock_in_screen.dart';
+import 'package:smartstock_admin/core/services/pdf_report_service.dart';
+import 'package:smartstock_admin/core/services/excel_export_service.dart';
 import 'product_detail_screen.dart';
 
 class SafetyStockAlertsScreen extends ConsumerStatefulWidget {
@@ -19,6 +21,7 @@ class SafetyStockAlertsScreen extends ConsumerStatefulWidget {
 
 class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScreen> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+  int _fefoFilterIndex = 0; // 0: Tất cả, 1: Đã quá hạn, 2: Cận date <= 30 ngày
 
   @override
   void initState() {
@@ -36,13 +39,57 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
   Widget build(BuildContext context) {
     final products = ref.watch(productListProvider);
 
-    final lowStockItems = products.where((p) => p.isLowStock).toList();
-    final deadStockItems = products.where((p) => p.isDeadStock).toList();
-    final expiryItems = products.where((p) => p.isExpiringSoon || p.isExpired).toList();
+    // 1. Sắp xếp thiếu an toàn: thiếu nhiều nhất lên đầu
+    final lowStockItems = products.where((p) => p.isLowStock).toList()
+      ..sort((a, b) => (b.minSafetyStock - b.currentStock).compareTo(a.minSafetyStock - a.currentStock));
+
+    // 2. Sắp xếp Dead Stock: tồn đọng nhiều ngày nhất lên đầu
+    final deadStockItems = products.where((p) => p.isDeadStock).toList()
+      ..sort((a, b) => b.daysSinceLastMovement.compareTo(a.daysSinceLastMovement));
+
+    // 3. Sắp xếp Hạn Dùng theo FEFO (First Expired First Out): hạn sử dụng gần nhất lên đầu
+    final allExpiryItems = products.where((p) => p.isExpiringSoon || p.isExpired).toList()
+      ..sort((a, b) => (a.expiryDate ?? DateTime.now()).compareTo(b.expiryDate ?? DateTime.now()));
+
+    final filteredExpiryItems = allExpiryItems.where((p) {
+      if (_fefoFilterIndex == 1) return p.isExpired;
+      if (_fefoFilterIndex == 2) return p.isExpiringSoon && !p.isExpired;
+      return true;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trung Tâm Cảnh Báo Kho', style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+            tooltip: 'In Báo Cáo Cảnh Báo PDF',
+            icon: const Icon(Icons.print_outlined, color: AppColors.primary),
+            onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Đang tạo file PDF Báo cáo Cảnh báo & FEFO...')),
+              );
+              await PdfReportService.printAlertsReport(
+                lowStock: lowStockItems,
+                deadStock: deadStockItems,
+                expiring: allExpiryItems,
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Xuất Báo Cáo Cảnh Báo Excel',
+            icon: const Icon(Icons.file_download_outlined, color: AppColors.primary),
+            onPressed: () async {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Đang xuất Báo cáo Cảnh báo ra Excel...')),
+              );
+              await ExcelExportService.exportAlertsReport(
+                lowStockProducts: lowStockItems,
+                deadStockProducts: deadStockItems,
+                expiringProducts: allExpiryItems,
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.primary,
@@ -58,7 +105,7 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
               icon: const Icon(Icons.hourglass_bottom_rounded, size: 18),
             ),
             Tab(
-              text: 'Hạn Dùng (${expiryItems.length})',
+              text: 'Hạn Dùng (${allExpiryItems.length})',
               icon: const Icon(Icons.event_busy, size: 18),
             ),
           ],
@@ -69,7 +116,7 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
         children: [
           _buildLowStockTab(lowStockItems),
           _buildDeadStockTab(deadStockItems),
-          _buildExpiryTab(expiryItems),
+          _buildExpiryTab(filteredExpiryItems, allExpiryItems),
         ],
       ),
     );
@@ -211,61 +258,146 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
     );
   }
 
-  Widget _buildExpiryTab(List<ProductSKU> items) {
-    if (items.isEmpty) {
-      return const Center(child: Text('Không có hàng hết hạn hoặc cận date'));
-    }
+  Widget _buildExpiryTab(List<ProductSKU> items, List<ProductSKU> allItems) {
+    final expiredCount = allItems.where((p) => p.isExpired).length;
+    final soonCount = allItems.where((p) => p.isExpiringSoon && !p.isExpired).length;
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final p = items[index];
-        final isExpired = p.isExpired;
-        final days = DateFormatter.daysUntilExpiry(p.expiryDate);
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(p.skuCode, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: (isExpired ? AppColors.danger : AppColors.warning).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        isExpired ? 'ĐÃ QUÁ HẠN' : 'CẬN DATE ($days ngày)',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: isExpired ? AppColors.danger : AppColors.warning),
-                      ),
-                    ),
-                  ],
+    return Column(
+      children: [
+        // FEFO Filter Chips
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              ChoiceChip(
+                label: Text('Tất cả (${allItems.length})'),
+                selected: _fefoFilterIndex == 0,
+                onSelected: (val) {
+                  if (val) setState(() => _fefoFilterIndex = 0);
+                },
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: Text('Đã Quá Hạn ($expiredCount)'),
+                selected: _fefoFilterIndex == 1,
+                selectedColor: AppColors.danger.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: _fefoFilterIndex == 1 ? AppColors.danger : null,
+                  fontWeight: _fefoFilterIndex == 1 ? FontWeight.bold : null,
                 ),
-                const SizedBox(height: 6),
-                Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 4),
-                Text('Hạn sử dụng: ${DateFormatter.formatDate(p.expiryDate)} • Tồn: ${p.currentStock} ${p.unit}', style: const TextStyle(fontSize: 12)),
-                const SizedBox(height: 4),
-                Text('Kệ lưu trữ: ${p.locationTag}', style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight)),
-                const SizedBox(height: 8),
-                Text(
-                  isExpired
-                      ? 'Biện pháp: Cách ly hàng hóa ngay lập tức để lập biên bản hủy hoặc hoàn trả.'
-                      : 'Biện pháp: Áp dụng nguyên tắc FEFO (First Expired First Out) - Ưu tiên xuất kho lô này trước.',
-                  style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: isExpired ? AppColors.danger : AppColors.warning),
+                onSelected: (val) {
+                  if (val) setState(() => _fefoFilterIndex = 1);
+                },
+              ),
+              const SizedBox(width: 8),
+              ChoiceChip(
+                label: Text('Cận Date <= 30 ngày ($soonCount)'),
+                selected: _fefoFilterIndex == 2,
+                selectedColor: AppColors.warning.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: _fefoFilterIndex == 2 ? AppColors.warning : null,
+                  fontWeight: _fefoFilterIndex == 2 ? FontWeight.bold : null,
                 ),
-              ],
-            ),
+                onSelected: (val) {
+                  if (val) setState(() => _fefoFilterIndex = 2);
+                },
+              ),
+            ],
           ),
-        );
-      },
+        ),
+        const Divider(height: 1),
+
+        // List
+        Expanded(
+          child: items.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle_outline, size: 48, color: AppColors.success),
+                      const SizedBox(height: 8),
+                      Text(
+                        _fefoFilterIndex == 1
+                            ? 'Không có mặt hàng nào quá hạn sử dụng!'
+                            : (_fefoFilterIndex == 2 ? 'Không có mặt hàng nào cận date <= 30 ngày!' : 'Không có hàng hết hạn hoặc cận date'),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final p = items[index];
+                    final isExpired = p.isExpired;
+                    final days = DateFormatter.daysUntilExpiry(p.expiryDate);
+
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(p.skuCode, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary)),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: (isExpired ? AppColors.danger : AppColors.warning).withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    isExpired ? 'ĐÃ QUÁ HẠN' : 'CẬN DATE ($days ngày)',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: isExpired ? AppColors.danger : AppColors.warning),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            const SizedBox(height: 4),
+                            Text('Hạn sử dụng: ${DateFormatter.formatDate(p.expiryDate)} • Tồn: ${p.currentStock} ${p.unit}', style: const TextStyle(fontSize: 12)),
+                            const SizedBox(height: 4),
+                            Text('Kệ lưu trữ: ${p.locationTag}', style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight)),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: (isExpired ? AppColors.danger : AppColors.warning).withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    isExpired ? Icons.cancel_outlined : Icons.priority_high,
+                                    size: 16,
+                                    color: isExpired ? AppColors.danger : AppColors.warning,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      isExpired
+                                          ? 'Biện pháp: Cách ly ngay để lập biên bản tiêu hủy hoặc trả nhà cung cấp.'
+                                          : 'Biện pháp FEFO: Ưu tiên xuất kho lô hàng này trước để tránh quá hạn.',
+                                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: isExpired ? AppColors.danger : AppColors.warning),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 }
