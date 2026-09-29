@@ -308,34 +308,14 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: TextFormField(
-                            controller: _orderNumberController,
-                            decoration: const InputDecoration(
-                              labelText: 'Số Phiếu Nhập *',
-                              prefixIcon: Icon(Icons.receipt_outlined, size: 18),
-                              isDense: true,
-                            ),
-                            validator: (v) => v == null || v.trim().isEmpty ? 'Nhập mã phiếu' : null,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 2,
-                          child: TextFormField(
-                            controller: _supplierPhoneController,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              labelText: 'SĐT Nhà Cung Cấp',
-                              prefixIcon: Icon(Icons.phone_outlined, size: 18),
-                              isDense: true,
-                            ),
-                          ),
-                        ),
-                      ],
+                    TextFormField(
+                      controller: _orderNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Số Phiếu Nhập *',
+                        prefixIcon: Icon(Icons.receipt_outlined, size: 18),
+                        isDense: true,
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty ? 'Nhập mã phiếu' : null,
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
@@ -346,6 +326,16 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                         isDense: true,
                       ),
                       validator: (v) => v == null || v.trim().isEmpty ? 'Nhập tên nhà cung cấp' : null,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _supplierPhoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Số Điện Thoại NCC (Tùy chọn)',
+                        prefixIcon: Icon(Icons.phone_outlined, size: 18),
+                        isDense: true,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     // Supplier quick chips
@@ -721,17 +711,26 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 6,
+                                runSpacing: 4,
                                 children: [
                                   Text(
-                                    'Vốn cũ: ${CurrencyFormatter.formatVND(draft.sku.costPrice)} (Tồn ${draft.sku.currentStock})',
+                                    'Vốn cũ: ${CurrencyFormatter.formatVND(draft.sku.costPrice)} (Tồn: ${draft.sku.currentStock})',
                                     style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
                                   ),
-                                  const Icon(Icons.arrow_forward, size: 12, color: AppColors.accent),
-                                  Text(
-                                    'Vốn mới: ${CurrencyFormatter.formatVND(newMAC)} (Tổng ${draft.sku.currentStock + draft.quantity})',
-                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.accent),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.arrow_forward, size: 12, color: AppColors.accent),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Vốn mới: ${CurrencyFormatter.formatVND(newMAC)} (Tổng: ${draft.sku.currentStock + draft.quantity})',
+                                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.accent),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

@@ -9,7 +9,8 @@ import 'create_stock_out_screen.dart';
 import 'stock_out_detail_screen.dart';
 
 class StockOutListScreen extends ConsumerStatefulWidget {
-  const StockOutListScreen({super.key});
+  final bool embedded;
+  const StockOutListScreen({super.key, this.embedded = false});
 
   @override
   ConsumerState<StockOutListScreen> createState() => _StockOutListScreenState();
@@ -63,21 +64,23 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
     final double totalProfit = totalRevenue - totalCogs;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Xuất Kho & Điều Chuyển', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.sort),
-            tooltip: 'Sắp xếp danh sách',
-            onSelected: (val) => setState(() => _sortBy = val),
-            itemBuilder: (ctx) => [
-              const PopupMenuItem(value: 'NEWEST', child: Text('Mới nhất trước')),
-              const PopupMenuItem(value: 'OLDEST', child: Text('Cũ nhất trước')),
-              const PopupMenuItem(value: 'HIGHEST_VALUE', child: Text('Giá trị xuất cao nhất')),
-            ],
-          ),
-        ],
-      ),
+      appBar: widget.embedded
+          ? null
+          : AppBar(
+              title: const Text('Xuất Kho & Điều Chuyển', style: TextStyle(fontWeight: FontWeight.bold)),
+              actions: [
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.sort),
+                  tooltip: 'Sắp xếp danh sách',
+                  onSelected: (val) => setState(() => _sortBy = val),
+                  itemBuilder: (ctx) => [
+                    const PopupMenuItem(value: 'NEWEST', child: Text('Mới nhất trước')),
+                    const PopupMenuItem(value: 'OLDEST', child: Text('Cũ nhất trước')),
+                    const PopupMenuItem(value: 'HIGHEST_VALUE', child: Text('Giá trị xuất cao nhất')),
+                  ],
+                ),
+              ],
+            ),
       body: Column(
         children: [
           // Summary Metrics Banner
@@ -113,26 +116,45 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
           // Search Field
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Tìm theo mã phiếu, bên nhận, chi nhánh, SKU...',
-                prefixIcon: const Icon(Icons.search, size: 20),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
-                isDense: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              onChanged: (_) => setState(() {}),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Tìm theo mã phiếu, bên nhận, SKU...',
+                      prefixIcon: const Icon(Icons.search, size: 20),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear, size: 18),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {});
+                              },
+                            )
+                          : null,
+                      isDense: true,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+                if (widget.embedded) ...[
+                  const SizedBox(width: 4),
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.sort, color: AppColors.accent),
+                    tooltip: 'Sắp xếp danh sách',
+                    onSelected: (val) => setState(() => _sortBy = val),
+                    itemBuilder: (ctx) => [
+                      const PopupMenuItem(value: 'NEWEST', child: Text('Mới nhất trước')),
+                      const PopupMenuItem(value: 'OLDEST', child: Text('Cũ nhất trước')),
+                      const PopupMenuItem(value: 'HIGHEST_VALUE', child: Text('Giá trị xuất cao nhất')),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
 
@@ -194,7 +216,7 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 84),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
                       final order = filtered[index];
@@ -228,46 +250,44 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Wrap(
+                                  alignment: WrapAlignment.spaceBetween,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  spacing: 6,
+                                  runSpacing: 4,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primary.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        order.orderNumber,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.primary),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
+                                      decoration: BoxDecoration(
+                                        color: typeColor.withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(typeIcon, size: 11, color: typeColor),
+                                          const SizedBox(width: 3),
+                                          Text(
+                                            order.type.label,
+                                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: typeColor),
                                           ),
-                                          child: Text(
-                                            order.orderNumber,
-                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: typeColor.withValues(alpha: 0.12),
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(typeIcon, size: 12, color: typeColor),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                order.type.label,
-                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: typeColor),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                     Text(
                                       DateFormatter.formatDateTime(order.createdAt),
-                                      style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                                      style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondaryLight),
                                     ),
                                   ],
                                 ),
@@ -325,14 +345,26 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
                                 const Divider(height: 16),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      '${order.items.length} mặt hàng (${CurrencyFormatter.formatNumber(order.totalQuantity)} đơn vị)',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+                                    Expanded(
+                                      child: Text(
+                                        '${order.items.length} mặt hàng (${CurrencyFormatter.formatNumber(order.totalQuantity)} đơn vị)',
+                                        style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondaryLight),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                    Text(
-                                      CurrencyFormatter.formatVND(order.totalRevenue),
-                                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                    const SizedBox(width: 8),
+                                    Flexible(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          CurrencyFormatter.formatVND(order.totalRevenue),
+                                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -388,21 +420,25 @@ class _StockOutListScreenState extends ConsumerState<StockOutListScreen> {
         children: [
           Icon(icon, color: Colors.white70, size: 16),
           const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
           Text(
             label,
             style: const TextStyle(color: Colors.white70, fontSize: 10),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

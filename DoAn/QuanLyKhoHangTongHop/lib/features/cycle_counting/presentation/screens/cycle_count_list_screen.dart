@@ -90,7 +90,7 @@ class CycleCountListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kiểm Kê Định Kỳ (Cycle Count)', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Kiểm Kê Định Kỳ', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: sessions.isEmpty
           ? Center(
@@ -110,7 +110,7 @@ class CycleCountListScreen extends ConsumerWidget {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 84),
               itemCount: sessions.length,
               itemBuilder: (context, index) {
                 final session = sessions[index];
@@ -165,14 +165,21 @@ class CycleCountListScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 'Tiến độ: ${session.auditedCount}/${session.items.length} SKU',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600),
                               ),
-                              Text(
-                                'Sai lệch: ${session.discrepancyItemsCount} SKU (${CurrencyFormatter.formatCompactVND(session.totalVarianceValue)})',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: session.discrepancyItemsCount > 0 ? AppColors.danger : AppColors.success,
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    'Sai lệch: ${session.discrepancyItemsCount} SKU (${CurrencyFormatter.formatCompactVND(session.totalVarianceValue)})',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: session.discrepancyItemsCount > 0 ? AppColors.danger : AppColors.success,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],

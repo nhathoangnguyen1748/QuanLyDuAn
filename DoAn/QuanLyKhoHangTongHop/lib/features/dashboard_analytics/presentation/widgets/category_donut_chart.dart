@@ -123,38 +123,45 @@ class _CategoryDonutChartState extends State<CategoryDonutChart> {
               children: widget.categories.map((cat) {
                 final color = Color(cat.colorHex);
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(vertical: 6.0),
                   child: Row(
                     children: [
                       Container(
-                        width: 12,
-                        height: 12,
+                        width: 10,
+                        height: 10,
                         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(3)),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          cat.categoryName,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cat.categoryName,
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${CurrencyFormatter.formatNumber(cat.totalStockUnits)} sản phẩm',
+                              style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        '${CurrencyFormatter.formatNumber(cat.totalStockUnits)} cái',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        CurrencyFormatter.formatCompactVND(cat.totalValue),
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(width: 8),
-                      SizedBox(
-                        width: 42,
-                        child: Text(
-                          '${cat.percentage.toStringAsFixed(1)}%',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            CurrencyFormatter.formatCompactVND(cat.totalValue),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '${cat.percentage.toStringAsFixed(1)}%',
+                            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: color),
+                          ),
+                        ],
                       ),
                     ],
                   ),

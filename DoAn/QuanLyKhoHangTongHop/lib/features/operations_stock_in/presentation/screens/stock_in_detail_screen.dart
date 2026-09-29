@@ -58,16 +58,23 @@ class StockInDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.receipt_long, color: AppColors.primary, size: 22),
-                          const SizedBox(width: 8),
-                          Text(
-                            order.orderNumber,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Icon(Icons.receipt_long, color: AppColors.primary, size: 22),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                order.orderNumber,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
@@ -247,10 +254,17 @@ class StockInDetailScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Số lượng: ${CurrencyFormatter.formatNumber(item.quantity)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                        Text('Đơn giá nhập: ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12)),
+                        Text('SL: ${CurrencyFormatter.formatNumber(item.quantity)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                        Text('Đơn giá: ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight)),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Thành tiền:', style: TextStyle(fontSize: 12, color: AppColors.textSecondaryLight)),
                         Text(
-                          'Thành tiền: ${CurrencyFormatter.formatVND(item.totalAmount)}',
+                          CurrencyFormatter.formatVND(item.totalAmount),
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
                         ),
                       ],
@@ -263,14 +277,18 @@ class StockInDetailScreen extends StatelessWidget {
                         color: AppColors.accent.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 6,
+                        runSpacing: 2,
                         children: [
                           Text(
                             'Vốn cũ: ${CurrencyFormatter.formatVND(item.currentCostBefore)}',
                             style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
                           ),
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(Icons.arrow_forward, size: 12, color: AppColors.accent),
                               const SizedBox(width: 4),

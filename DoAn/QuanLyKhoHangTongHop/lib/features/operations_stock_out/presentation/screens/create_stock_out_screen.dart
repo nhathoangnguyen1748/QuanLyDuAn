@@ -355,36 +355,26 @@ class _CreateStockOutScreenState extends ConsumerState<CreateStockOutScreen> {
                       onSelectionChanged: (set) => _onTypeChanged(set.first),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: TextFormField(
-                            controller: _orderNumberController,
-                            decoration: const InputDecoration(
-                              labelText: 'Số Phiếu Xuất *',
-                              prefixIcon: Icon(Icons.receipt_outlined, size: 18),
-                              isDense: true,
-                            ),
-                            validator: (v) => v == null || v.trim().isEmpty ? 'Nhập mã phiếu' : null,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 4,
-                          child: TextFormField(
-                            controller: _receiverController,
-                            decoration: InputDecoration(
-                              labelText: _selectedType == StockOutType.transfer
-                                  ? 'Đơn vị / Bộ phận nhận'
-                                  : 'Khách hàng / Đại lý nhận *',
-                              prefixIcon: const Icon(Icons.person_pin_outlined, size: 18),
-                              isDense: true,
-                            ),
-                            validator: (v) => v == null || v.trim().isEmpty ? 'Nhập tên người nhận' : null,
-                          ),
-                        ),
-                      ],
+                    TextFormField(
+                      controller: _orderNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Số Phiếu Xuất *',
+                        prefixIcon: Icon(Icons.receipt_outlined, size: 18),
+                        isDense: true,
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty ? 'Nhập mã phiếu' : null,
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      controller: _receiverController,
+                      decoration: InputDecoration(
+                        labelText: _selectedType == StockOutType.transfer
+                            ? 'Đơn vị / Chi nhánh nhận'
+                            : 'Khách hàng / Đại lý nhận *',
+                        prefixIcon: const Icon(Icons.person_pin_outlined, size: 18),
+                        isDense: true,
+                      ),
+                      validator: (v) => v == null || v.trim().isEmpty ? 'Nhập tên người nhận' : null,
                     ),
                     const SizedBox(height: 8),
 

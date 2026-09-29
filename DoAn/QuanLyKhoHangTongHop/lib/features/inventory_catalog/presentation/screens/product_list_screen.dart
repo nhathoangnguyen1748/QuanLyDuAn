@@ -58,7 +58,11 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh Mục Tồn Kho', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text('Danh Mục Tồn Kho', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+        ),
         actions: [
           IconButton(
             tooltip: 'Quét Barcode tìm kiếm',
@@ -146,9 +150,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Hiển thị: ${filtered.length} / ${products.length} mặt hàng',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight),
+                Expanded(
+                  child: Text(
+                    'Hiển thị: ${filtered.length}/${products.length} SKU',
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Text(
                   'Tổng vốn: ${CurrencyFormatter.formatCompactVND(filtered.fold(0.0, (s, p) => s + p.totalInventoryValue))}',
@@ -184,7 +192,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 84),
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
                       final p = filtered[index];
@@ -262,32 +270,40 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Top line: SKU Code, Location Tag, Category
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 6,
+                runSpacing: 4,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      p.skuCode,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppColors.primary),
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          p.skuCode,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppColors.primary),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          p.locationTag,
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.accent),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      p.locationTag,
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.accent),
-                    ),
-                  ),
-                  const Spacer(),
                   Text(
                     p.categoryName,
                     style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight),
@@ -320,48 +336,61 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
 
               // Stock and Financial metrics
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Tồn: ',
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text.rich(
+                          TextSpan(
+                            text: 'Tồn: ',
                             style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+                            children: [
+                              TextSpan(
+                                text: '${CurrencyFormatter.formatNumber(p.currentStock)} ${p.unit}',
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: p.isLowStock ? AppColors.danger : AppColors.primary,
+                                ),
+                              ),
+                              if (p.isLowStock)
+                                TextSpan(
+                                  text: ' (Min: ${p.minSafetyStock})',
+                                  style: const TextStyle(fontSize: 11, color: AppColors.danger, fontWeight: FontWeight.w600),
+                                ),
+                            ],
                           ),
-                          Text(
-                            '${CurrencyFormatter.formatNumber(p.currentStock)} ${p.unit}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: p.isLowStock ? AppColors.danger : AppColors.primary,
-                            ),
-                          ),
-                          if (p.isLowStock)
-                            Text(
-                              ' (Min: ${p.minSafetyStock})',
-                              style: const TextStyle(fontSize: 11, color: AppColors.danger),
-                            ),
-                        ],
-                      ),
-                      Text(
-                        'Vốn MAC: ${CurrencyFormatter.formatVND(p.costPrice)}',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                      ),
-                    ],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Vốn MAC: ${CurrencyFormatter.formatVND(p.costPrice)}',
+                          style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Giá trị tồn',
-                        style: const TextStyle(fontSize: 10, color: AppColors.textMutedLight),
+                        style: TextStyle(fontSize: 10, color: AppColors.textMutedLight),
                       ),
-                      Text(
-                        CurrencyFormatter.formatCompactVND(p.totalInventoryValue),
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          CurrencyFormatter.formatCompactVND(p.totalInventoryValue),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary),
+                        ),
                       ),
                     ],
                   ),

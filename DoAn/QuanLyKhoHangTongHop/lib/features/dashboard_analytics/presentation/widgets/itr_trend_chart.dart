@@ -32,22 +32,25 @@ class _ITRTrendChartState extends State<ITRTrendChart> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hệ Số Vòng Quay Tồn Kho (ITR)',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'ITR = Giá vốn hàng bán (COGS) / Tồn kho bình quân',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Vòng Quay Tồn Kho (ITR)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'ITR = COGS / Tồn bình quân',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -59,8 +62,8 @@ class _ITRTrendChartState extends State<ITRTrendChart> {
                       const Icon(Icons.speed, size: 14, color: AppColors.success),
                       const SizedBox(width: 4),
                       Text(
-                        '${latestITR.toStringAsFixed(1)} vòng/năm',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.success),
+                        '${latestITR.toStringAsFixed(1)} v/năm',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppColors.success),
                       ),
                     ],
                   ),

@@ -85,8 +85,10 @@ class _CycleCountAuditScreenState extends ConsumerState<CycleCountAuditScreen> {
               ),
               const SizedBox(height: 12),
               // Quick quantity buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
                 children: [
                   _quickAddButton(controller, 1),
                   _quickAddButton(controller, 5),
@@ -303,7 +305,10 @@ class _CycleCountAuditScreenState extends ConsumerState<CycleCountAuditScreen> {
                 ElevatedButton.icon(
                   onPressed: _scanBarcodeToCount,
                   icon: const Icon(Icons.qr_code_scanner, size: 18),
-                  label: const Text('Quét đối soát'),
+                  label: const Text('Quét mã'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  ),
                 ),
               ],
             ),
@@ -421,7 +426,10 @@ class _CycleCountAuditScreenState extends ConsumerState<CycleCountAuditScreen> {
   Widget _buildStatCol(String label, String value, Color color) {
     return Column(
       children: [
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color)),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color)),
+        ),
         const SizedBox(height: 2),
         Text(label, style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight)),
       ],

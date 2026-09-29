@@ -37,20 +37,23 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Phân Tích ABC (Nguyên Lý Pareto 80/20)',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Tỷ trọng doanh thu theo từng nhóm hàng hóa',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Phân Tích ABC (Pareto 80/20)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Tỷ trọng doanh thu theo từng nhóm hàng hóa',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -59,7 +62,7 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
                   ),
                   child: const Text(
                     '80 / 15 / 5 Rule',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary),
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.primary),
                   ),
                 ),
               ],
@@ -78,7 +81,7 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
                     desc: 'Quan trọng nhất (80% giá trị)',
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Expanded(
                   child: _buildGroupIndicator(
                     group: 'Nhóm B',
@@ -88,7 +91,7 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
                     desc: 'Trung bình (15% giá trị)',
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Expanded(
                   child: _buildGroupIndicator(
                     group: 'Nhóm C',
@@ -237,7 +240,7 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
     required String desc,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
@@ -248,19 +251,33 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
         children: [
           Row(
             children: [
-              Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+              Container(width: 6, height: 6, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
               const SizedBox(width: 4),
-              Text(group, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12)),
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(group, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 11)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 4),
-          Text(
-            '${share.toStringAsFixed(1)}% giá trị',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${share.toStringAsFixed(0)}% giá trị',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5),
+            ),
           ),
-          Text(
-            '$skuCount mặt hàng',
-            style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '$skuCount SKU',
+              style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight),
+            ),
           ),
         ],
       ),

@@ -31,28 +31,35 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'SmartStock Admin',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                const Flexible(
+                  child: Text(
+                    'SmartStock Admin',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   child: const Text(
                     'ONLINE',
-                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.success),
+                    style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.bold, color: AppColors.success),
                   ),
                 ),
               ],
             ),
             Text(
               settings.name,
-              style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+              style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

@@ -162,35 +162,30 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             const Text('THÔNG TIN ĐỊNH DANH', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
             const SizedBox(height: 8),
 
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _skuCodeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Mã Quản Lý (SKU Code) *',
-                      hintText: 'VD: SKU-ELC-001',
-                    ),
-                    validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc nhập SKU' : null,
-                  ),
+            TextFormField(
+              controller: _skuCodeController,
+              decoration: const InputDecoration(
+                labelText: 'Mã Quản Lý (SKU Code) *',
+                hintText: 'VD: SKU-ELC-001',
+                prefixIcon: Icon(Icons.tag, size: 18),
+              ),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc nhập SKU' : null,
+            ),
+            const SizedBox(height: 12),
+
+            TextFormField(
+              controller: _barcodeController,
+              decoration: InputDecoration(
+                labelText: 'Mã Vạch Barcode *',
+                hintText: 'EAN-13 / Code 128',
+                prefixIcon: const Icon(Icons.qr_code, size: 18),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+                  onPressed: _scanBarcode,
+                  tooltip: 'Quét mã vạch camera',
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _barcodeController,
-                    decoration: InputDecoration(
-                      labelText: 'Mã Vạch Barcode *',
-                      hintText: 'EAN-13 / Code 128',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
-                        onPressed: _scanBarcode,
-                        tooltip: 'Quét mã vạch camera',
-                      ),
-                    ),
-                    validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc có Barcode' : null,
-                  ),
-                ),
-              ],
+              ),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc có Barcode' : null,
             ),
             const SizedBox(height: 12),
 
@@ -228,10 +223,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             Row(
               children: [
                 Expanded(
+                  flex: 3,
                   child: TextFormField(
                     controller: _locationTagController,
                     decoration: const InputDecoration(
-                      labelText: 'Vị Trí Kệ (Aisle/Rack/Bin) *',
+                      labelText: 'Vị Trí Kệ *',
                       hintText: 'VD: KHO-A-KAY-03',
                       prefixIcon: Icon(Icons.place, size: 18),
                     ),
@@ -240,11 +236,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
+                  flex: 2,
                   child: TextFormField(
                     controller: _unitController,
                     decoration: const InputDecoration(
                       labelText: 'Đơn Vị Tính',
-                      hintText: 'Cái, Thùng, Hộp, Can...',
+                      hintText: 'Cái, Thùng...',
                     ),
                   ),
                 ),
@@ -256,19 +253,19 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             const Text('ĐỊNH MỨC SỐ LƯỢNG TỒN TRỮ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
             const SizedBox(height: 8),
 
+            TextFormField(
+              controller: _currentStockController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Số Lượng Tồn Kho Hiện Tại',
+                hintText: '0',
+                prefixIcon: Icon(Icons.inventory_2_outlined, size: 18),
+              ),
+            ),
+            const SizedBox(height: 12),
+
             Row(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _currentStockController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Tồn Kho Hiện Tại',
-                      hintText: '0',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
                 Expanded(
                   child: TextFormField(
                     controller: _minStockController,
@@ -276,10 +273,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Tồn Min An Toàn',
                       hintText: '10',
+                      prefixIcon: Icon(Icons.warning_amber_rounded, size: 18),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _maxStockController,
@@ -287,6 +285,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Sức Chứa Max',
                       hintText: '100',
+                      prefixIcon: Icon(Icons.vertical_align_top_rounded, size: 18),
                     ),
                   ),
                 ),
