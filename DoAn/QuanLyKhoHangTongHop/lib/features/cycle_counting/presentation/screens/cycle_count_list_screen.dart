@@ -12,73 +12,225 @@ class CycleCountListScreen extends ConsumerWidget {
   const CycleCountListScreen({super.key});
 
   void _showCreateSessionDialog(BuildContext context, WidgetRef ref) {
-    final titleController = TextEditingController(text: 'Kiểm kê định kỳ tháng ${DateTime.now().month}/${DateTime.now().year}');
-    final scopeController = TextEditingController(text: 'Toàn bộ kho hàng');
+    final allProducts = ref.read(productListProvider);
+    final categories = ref.read(categoryListProvider);
+
+    // Extract unique shelf zones (e.g. KHO-A, KHO-B, KHO-C, or first 5 chars)
+    final Set<String> zones = {};
+    for (final p in allProducts) {
+      if (p.locationTag.isNotEmpty) {
+        final parts = p.locationTag.split('-');
+        if (parts.length >= 2) {
+          zones.add('${parts[0]}-${parts[1]}'); // VD: KHO-A, KHO-B
+        } else {
+          zones.add(p.locationTag);
+        }
+      }
+    }
+    final sortedZones = zones.toList()..sort();
+
+    int scopeType = 0; // 0: Toàn kho, 1: Phân khu kệ, 2: Ngành hàng
+    String selectedZone = sortedZones.isNotEmpty ? sortedZones.first : '';
+    String selectedCategoryId = categories.isNotEmpty ? categories.first.id : '';
+
+    final titleController = TextEditingController(
+      text: 'Kiểm kê định kỳ tháng ${DateTime.now().month}/${DateTime.now().year}',
+    );
 
     showDialog(
       context: context,
       builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Tạo Phiên Kiểm Kê Mới'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Tên đợt kiểm kê *'),
+        return StatefulBuilder(
+          builder: (context, setState) {
+            List selectedProducts;
+            String scopeDescription;
+
+            if (scopeType == 1 && selectedZone.isNotEmpty) {
+              selectedProducts = allProducts.where((p) => p.locationTag.startsWith(selectedZone)).toList();
+              scopeDescription = 'Phân khu kệ $selectedZone';
+            } else if (scopeType == 2 && selectedCategoryId.isNotEmpty) {
+              final cat = categories.firstWhere((c) => c.id == selectedCategoryId, orElse: () => categories.first);
+              selectedProducts = allProducts.where((p) => p.categoryId == selectedCategoryId).toList();
+              scopeDescription = 'Ngành hàng ${cat.name}';
+            } else {
+              selectedProducts = allProducts;
+              scopeDescription = 'Toàn bộ kho hàng';
+            }
+
+            return AlertDialog(
+              title: const Row(
+                children: [
+                  Icon(Icons.fact_check, color: AppColors.primary),
+                  SizedBox(width: 8),
+                  Text('Tạo Đợt Kiểm Kê Mới', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
               ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: scopeController,
-                decoration: const InputDecoration(labelText: 'Phạm vi kiểm (Kệ A, Toàn kho,...) *'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Tên đợt kiểm kê *',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Phạm vi kiểm kê:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 8),
+                    SegmentedButton<int>(
+                      segments: const [
+                        ButtonSegment(value: 0, label: Text('Toàn kho', style: TextStyle(fontSize: 11))),
+                        ButtonSegment(value: 1, label: Text('Theo kệ', style: TextStyle(fontSize: 11))),
+                        ButtonSegment(value: 2, label: Text('Ngành', style: TextStyle(fontSize: 11))),
+                      ],
+                      selected: {scopeType},
+                      onSelectionChanged: (val) {
+                        setState(() {
+                          scopeType = val.first;
+                          if (scopeType == 1) {
+                            titleController.text = 'Kiểm kê phân khu kệ $selectedZone';
+                          } else if (scopeType == 2) {
+                            final cat = categories.firstWhere((c) => c.id == selectedCategoryId, orElse: () => categories.first);
+                            titleController.text = 'Kiểm kê ngành hàng ${cat.name}';
+                          } else {
+                            titleController.text = 'Kiểm kê định kỳ tháng ${DateTime.now().month}/${DateTime.now().year}';
+                          }
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Selector for shelf zone
+                    if (scopeType == 1) ...[
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedZone,
+                        decoration: const InputDecoration(
+                          labelText: 'Chọn dãy kệ / Phân khu',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        items: sortedZones.map((z) {
+                          final count = allProducts.where((p) => p.locationTag.startsWith(z)).length;
+                          return DropdownMenuItem(
+                            value: z,
+                            child: Text('$z ($count SKU)'),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              selectedZone = val;
+                              titleController.text = 'Kiểm kê phân khu kệ $selectedZone';
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
+                    // Selector for category
+                    if (scopeType == 2) ...[
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedCategoryId,
+                        decoration: const InputDecoration(
+                          labelText: 'Chọn ngành hàng',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                        items: categories.map((c) {
+                          final count = allProducts.where((p) => p.categoryId == c.id).length;
+                          return DropdownMenuItem(
+                            value: c.id,
+                            child: Text('${c.name} ($count SKU)'),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              selectedCategoryId = val;
+                              final cat = categories.firstWhere((c) => c.id == selectedCategoryId, orElse: () => categories.first);
+                              titleController.text = 'Kiểm kê ngành hàng ${cat.name}';
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
+                    // SKU Count Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline, size: 18, color: AppColors.primary),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Đã chọn: ${selectedProducts.length} mặt hàng SKU cho đợt kiểm này ($scopeDescription).',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
-            ElevatedButton(
-              onPressed: () async {
-                final title = titleController.text.trim();
-                final scope = scopeController.text.trim();
-                if (title.isEmpty) return;
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
+                ElevatedButton(
+                  onPressed: selectedProducts.isEmpty
+                      ? null
+                      : () async {
+                          final title = titleController.text.trim();
+                          if (title.isEmpty) return;
 
-                final products = ref.read(productListProvider);
-                final items = products.map((p) {
-                  return CycleCountItem(
-                    skuId: p.id,
-                    skuCode: p.skuCode,
-                    skuName: p.name,
-                    barcode: p.barcode,
-                    locationTag: p.locationTag,
-                    bookStock: p.currentStock,
-                    physicalCount: p.currentStock,
-                    costPrice: p.costPrice,
-                    isAudited: false,
-                  );
-                }).toList();
+                          final items = selectedProducts.map((p) {
+                            return CycleCountItem(
+                              skuId: p.id,
+                              skuCode: p.skuCode,
+                              skuName: p.name,
+                              barcode: p.barcode,
+                              locationTag: p.locationTag,
+                              bookStock: p.currentStock,
+                              physicalCount: p.currentStock,
+                              costPrice: p.costPrice,
+                              isAudited: false,
+                            );
+                          }).toList();
 
-                final now = DateTime.now();
-                final newSession = CycleCountSession(
-                  id: const Uuid().v4(),
-                  sessionCode: 'KK-${now.year}${now.month.toString().padLeft(2, '0')}-${now.minute}${now.second}',
-                  title: title,
-                  scope: scope,
-                  items: items,
-                  createdAt: now,
-                );
+                          final now = DateTime.now();
+                          final newSession = CycleCountSession(
+                            id: const Uuid().v4(),
+                            sessionCode: 'KK-${now.year}${now.month.toString().padLeft(2, '0')}-${now.minute}${now.second}',
+                            title: title,
+                            scope: scopeDescription,
+                            items: items,
+                            createdAt: now,
+                          );
 
-                await ref.read(cycleCountListProvider.notifier).saveSession(newSession);
-                if (ctx.mounted) {
-                  Navigator.pop(ctx);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => CycleCountAuditScreen(session: newSession)),
-                  );
-                }
-              },
-              child: const Text('Bắt đầu kiểm kê'),
-            ),
-          ],
+                          await ref.read(cycleCountListProvider.notifier).saveSession(newSession);
+                          if (ctx.mounted) {
+                            Navigator.pop(ctx);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => CycleCountAuditScreen(session: newSession)),
+                            );
+                          }
+                        },
+                  child: const Text('Bắt đầu kiểm kê'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

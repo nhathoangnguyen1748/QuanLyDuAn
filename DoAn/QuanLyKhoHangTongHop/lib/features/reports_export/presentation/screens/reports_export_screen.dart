@@ -125,6 +125,47 @@ class ReportsExportScreen extends ConsumerWidget {
                     await PdfReportService.printStockOutOrder(stockOutOrders.first);
                   },
           ),
+          const SizedBox(height: 12),
+
+          // Report 5: Báo cáo Cảnh báo Tồn kho & FEFO
+          _buildReportCard(
+            title: 'Báo Cáo Cảnh Báo Tồn Kho & Hạn Dùng FEFO',
+            subtitle: 'Tổng hợp SKU thiếu an toàn, hàng ứ đọng Dead Stock (>60 ngày) và hàng cận date/quá hạn theo chuẩn FEFO.',
+            icon: Icons.warning_amber_rounded,
+            iconColor: Colors.deepOrange,
+            buttonText: 'In Báo Cáo PDF',
+            onAction: () async {
+              final lowStock = products.where((p) => p.isLowStock).toList();
+              final deadStock = products.where((p) => p.isDeadStock).toList();
+              final expiring = products.where((p) => p.isExpiringSoon || p.isExpired).toList()
+                ..sort((a, b) => (a.expiryDate ?? DateTime.now()).compareTo(b.expiryDate ?? DateTime.now()));
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Đang tạo file PDF Báo cáo Cảnh báo & FEFO...')),
+              );
+              await PdfReportService.printAlertsReport(
+                lowStock: lowStock,
+                deadStock: deadStock,
+                expiring: expiring,
+              );
+            },
+            secondaryButtonText: 'Xuất Excel',
+            onSecondaryAction: () async {
+              final lowStock = products.where((p) => p.isLowStock).toList();
+              final deadStock = products.where((p) => p.isDeadStock).toList();
+              final expiring = products.where((p) => p.isExpiringSoon || p.isExpired).toList()
+                ..sort((a, b) => (a.expiryDate ?? DateTime.now()).compareTo(b.expiryDate ?? DateTime.now()));
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Đang trích xuất Báo cáo Cảnh báo sang Excel...')),
+              );
+              await ExcelExportService.exportAlertsReport(
+                lowStockProducts: lowStock,
+                deadStockProducts: deadStock,
+                expiringProducts: expiring,
+              );
+            },
+          ),
         ],
       ),
     );

@@ -458,4 +458,196 @@ class PdfReportService {
       name: 'Label_${product.skuCode}.pdf',
     );
   }
+
+  /// In Báo Cáo Cảnh Báo Tồn Kho, Dead Stock & Hạn Dùng FEFO (Khổ A4)
+  static Future<void> printAlertsReport({
+    required List<ProductSKU> lowStock,
+    required List<ProductSKU> deadStock,
+    required List<ProductSKU> expiring,
+  }) async {
+    final pdf = pw.Document();
+    final font = await PdfGoogleFonts.robotoRegular();
+    final fontBold = await PdfGoogleFonts.robotoBold();
+
+    final now = DateTime.now();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (context) {
+          return [
+            // Header
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('SMARTSTOCK LOGISTICS', style: pw.TextStyle(font: fontBold, fontSize: 18, color: PdfColors.blue800)),
+                    pw.Text('Tổng Kho Thông Minh Miền Nam', style: pw.TextStyle(font: font, fontSize: 10, color: PdfColors.grey700)),
+                    pw.Text('BÁO CÁO CẢNH BÁO TỒN KHO & HẠN DÙNG FEFO', style: pw.TextStyle(font: fontBold, fontSize: 12, color: PdfColors.red800)),
+                  ],
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    pw.Text('Ngày xuất: ${DateFormatter.formatDateTime(now)}', style: pw.TextStyle(font: font, fontSize: 10)),
+                    pw.Text('Người lập: Quang Minh (QA & Audit)', style: pw.TextStyle(font: fontBold, fontSize: 10)),
+                  ],
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 12),
+            pw.Divider(color: PdfColors.grey400),
+            pw.SizedBox(height: 8),
+
+            // Summary Stats KPI Box
+            pw.Container(
+              padding: const pw.EdgeInsets.all(10),
+              decoration: const pw.BoxDecoration(
+                color: PdfColors.grey100,
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(6)),
+              ),
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+                children: [
+                  pw.Column(
+                    children: [
+                      pw.Text('THIẾU AN TOÀN', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700)),
+                      pw.Text('${lowStock.length} SKU', style: pw.TextStyle(font: fontBold, fontSize: 14, color: PdfColors.red800)),
+                    ],
+                  ),
+                  pw.Column(
+                    children: [
+                      pw.Text('DEAD STOCK (>60D)', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700)),
+                      pw.Text('${deadStock.length} SKU', style: pw.TextStyle(font: fontBold, fontSize: 14, color: PdfColors.amber800)),
+                    ],
+                  ),
+                  pw.Column(
+                    children: [
+                      pw.Text('CẬN DATE / QUÁ HẠN', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700)),
+                      pw.Text('${expiring.length} SKU', style: pw.TextStyle(font: fontBold, fontSize: 14, color: PdfColors.purple800)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 16),
+
+            // Section 1: Thiếu tồn kho an toàn
+            pw.Text('1. DANH SÁCH MẶT HÀNG THIẾU TỒN AN TOÀN (CẦN NHẬP BỔ SUNG)', style: pw.TextStyle(font: fontBold, fontSize: 10, color: PdfColors.red800)),
+            pw.SizedBox(height: 6),
+            if (lowStock.isEmpty)
+              pw.Text('Không có mặt hàng nào thiếu tồn kho an toàn.', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700))
+            else
+              pw.TableHelper.fromTextArray(
+                context: context,
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                headerStyle: pw.TextStyle(font: fontBold, fontSize: 8, color: PdfColors.white),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.red700),
+                cellStyle: pw.TextStyle(font: font, fontSize: 8),
+                headers: ['Mã SKU', 'Tên Hàng Hóa', 'Kệ', 'Tồn Hiện Tại', 'Định Mức Min', 'Thiếu Hụt', 'Giá Vốn MAC'],
+                data: lowStock.map((p) {
+                  final deficit = p.minSafetyStock - p.currentStock;
+                  return [
+                    p.skuCode,
+                    p.name,
+                    p.locationTag,
+                    '${p.currentStock} ${p.unit}',
+                    '${p.minSafetyStock} ${p.unit}',
+                    deficit > 0 ? '$deficit ${p.unit}' : '0',
+                    CurrencyFormatter.formatVND(p.costPrice),
+                  ];
+                }).toList(),
+              ),
+            pw.SizedBox(height: 16),
+
+            // Section 2: Hàng chậm luân chuyển (Dead Stock)
+            pw.Text('2. DANH SÁCH HÀNG TỒN ĐỌNG CHẬM LUÂN CHUYỂN (DEAD STOCK > 60 NGÀY)', style: pw.TextStyle(font: fontBold, fontSize: 10, color: PdfColors.amber800)),
+            pw.SizedBox(height: 6),
+            if (deadStock.isEmpty)
+              pw.Text('Không có mặt hàng tồn đọng chậm luân chuyển.', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700))
+            else
+              pw.TableHelper.fromTextArray(
+                context: context,
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                headerStyle: pw.TextStyle(font: fontBold, fontSize: 8, color: PdfColors.white),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.amber800),
+                cellStyle: pw.TextStyle(font: font, fontSize: 8),
+                headers: ['Mã SKU', 'Tên Hàng Hóa', 'Kệ', 'Tồn Kho', 'Ngày Không Xuất', 'Tổng Vốn Ứ Đọng'],
+                data: deadStock.map((p) {
+                  return [
+                    p.skuCode,
+                    p.name,
+                    p.locationTag,
+                    '${p.currentStock} ${p.unit}',
+                    '${p.daysSinceLastMovement} ngày',
+                    CurrencyFormatter.formatVND(p.totalInventoryValue),
+                  ];
+                }).toList(),
+              ),
+            pw.SizedBox(height: 16),
+
+            // Section 3: Quản lý hạn dùng FEFO
+            pw.Text('3. QUẢN LÝ HẠN DÙNG THEO NGUYÊN TẮC FEFO (FIRST EXPIRED FIRST OUT)', style: pw.TextStyle(font: fontBold, fontSize: 10, color: PdfColors.purple800)),
+            pw.SizedBox(height: 6),
+            if (expiring.isEmpty)
+              pw.Text('Không có mặt hàng nào cận date hoặc quá hạn.', style: pw.TextStyle(font: font, fontSize: 9, color: PdfColors.grey700))
+            else
+              pw.TableHelper.fromTextArray(
+                context: context,
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                headerStyle: pw.TextStyle(font: fontBold, fontSize: 8, color: PdfColors.white),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.purple800),
+                cellStyle: pw.TextStyle(font: font, fontSize: 8),
+                headers: ['Mã SKU', 'Tên Hàng Hóa', 'Kệ', 'Tồn Kho', 'Hạn Dùng', 'Tình Trạng', 'Biện Pháp Khuyến Nghị'],
+                data: expiring.map((p) {
+                  final isExp = p.isExpired;
+                  final days = DateFormatter.daysUntilExpiry(p.expiryDate);
+                  return [
+                    p.skuCode,
+                    p.name,
+                    p.locationTag,
+                    '${p.currentStock} ${p.unit}',
+                    DateFormatter.formatDate(p.expiryDate),
+                    isExp ? 'ĐÃ QUÁ HẠN' : 'CẬN DATE ($days ngày)',
+                    isExp ? 'Cách ly, lập biên bản hủy' : 'Ưu tiên xuất kho trước (FEFO)',
+                  ];
+                }).toList(),
+              ),
+            pw.SizedBox(height: 24),
+
+            // Signature block
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+              children: [
+                pw.Column(
+                  children: [
+                    pw.Text('Người Lập Báo Cáo', style: pw.TextStyle(font: fontBold, fontSize: 10)),
+                    pw.Text('(Ký, họ tên)', style: pw.TextStyle(font: font, fontSize: 8, color: PdfColors.grey600)),
+                    pw.SizedBox(height: 40),
+                    pw.Text('Quang Minh', style: pw.TextStyle(font: fontBold, fontSize: 10)),
+                  ],
+                ),
+                pw.Column(
+                  children: [
+                    pw.Text('Trưởng Ban Kiểm Soát / Giám Đốc Kho', style: pw.TextStyle(font: fontBold, fontSize: 10)),
+                    pw.Text('(Ký, họ tên, đóng dấu)', style: pw.TextStyle(font: font, fontSize: 8, color: PdfColors.grey600)),
+                    pw.SizedBox(height: 40),
+                    pw.Text('................................', style: pw.TextStyle(font: font, fontSize: 10)),
+                  ],
+                ),
+              ],
+            ),
+          ];
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (format) async => pdf.save(),
+      name: 'BaoCao_CanhBaoKho_FEFO_${now.millisecondsSinceEpoch}.pdf',
+    );
+  }
 }

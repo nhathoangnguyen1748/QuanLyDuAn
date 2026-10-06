@@ -21,22 +21,14 @@ class ExcelExportService {
       TextCellValue('Ngành Hàng'),
       TextCellValue('Đơn Vị'),
       TextCellValue('Vị Trí Kệ'),
-      IntCellValue(0), // Tồn Hiện Tại header placeholder -> will be text
-      IntCellValue(0), // Tồn An Toàn
-      IntCellValue(0), // Tồn Tối Đa
-      DoubleCellValue(0.0), // Giá Nhập
-      DoubleCellValue(0.0), // Giá Bán
-      DoubleCellValue(0.0), // Tổng Giá Trị
+      TextCellValue('Tồn Hiện Tại'),
+      TextCellValue('Tồn An Toàn Min'),
+      TextCellValue('Tồn Tối Đa Max'),
+      TextCellValue('Giá Vốn MAC (VND)'),
+      TextCellValue('Giá Bán (VND)'),
+      TextCellValue('Tổng Giá Trị Tồn (VND)'),
       TextCellValue('Hạn Sử Dụng'),
     ]);
-
-    // Replace header cells with actual header texts
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0)).value = TextCellValue('Tồn Hiện Tại');
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0)).value = TextCellValue('Tồn An Toàn Min');
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0)).value = TextCellValue('Tồn Tối Đa Max');
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: 0)).value = TextCellValue('Giá Vốn MAC (VND)');
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 11, rowIndex: 0)).value = TextCellValue('Giá Bán (VND)');
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 12, rowIndex: 0)).value = TextCellValue('Tổng Giá Trị Tồn (VND)');
 
     for (int i = 0; i < products.length; i++) {
       final p = products[i];
@@ -109,6 +101,113 @@ class ExcelExportService {
       await Printing.sharePdf(
         bytes: Uint8List.fromList(fileBytes),
         filename: 'BienBan_KiemKe_${session.sessionCode}.xlsx',
+      );
+    }
+  }
+
+  /// Xuất Báo Cáo Cảnh Báo Tồn Kho, Dead Stock & Hạn Dùng FEFO ra Excel (.xlsx)
+  static Future<void> exportAlertsReport({
+    required List<ProductSKU> lowStockProducts,
+    required List<ProductSKU> deadStockProducts,
+    required List<ProductSKU> expiringProducts,
+  }) async {
+    final excel = Excel.createExcel();
+
+    // Sheet 1: Thiếu tồn kho an toàn
+    final sheetLow = excel[excel.getDefaultSheet() ?? 'Sheet1'];
+    excel.rename(sheetLow.sheetName, 'ThieuTonAnToan');
+    sheetLow.appendRow([
+      TextCellValue('STT'),
+      TextCellValue('Mã SKU'),
+      TextCellValue('Tên Hàng Hóa'),
+      TextCellValue('Vị Trí Kệ'),
+      TextCellValue('Đơn Vị'),
+      TextCellValue('Tồn Hiện Tại'),
+      TextCellValue('Định Mức Min'),
+      TextCellValue('Số Lượng Thiếu Hụt'),
+      TextCellValue('Giá Vốn MAC (VND)'),
+      TextCellValue('Giá Trị Cần Bổ Sung (VND)'),
+    ]);
+    for (int i = 0; i < lowStockProducts.length; i++) {
+      final p = lowStockProducts[i];
+      final deficit = p.minSafetyStock - p.currentStock;
+      sheetLow.appendRow([
+        IntCellValue(i + 1),
+        TextCellValue(p.skuCode),
+        TextCellValue(p.name),
+        TextCellValue(p.locationTag),
+        TextCellValue(p.unit),
+        IntCellValue(p.currentStock),
+        IntCellValue(p.minSafetyStock),
+        IntCellValue(deficit > 0 ? deficit : 0),
+        DoubleCellValue(p.costPrice),
+        DoubleCellValue(deficit > 0 ? deficit * p.costPrice : 0.0),
+      ]);
+    }
+
+    // Sheet 2: Hàng chậm luân chuyển (Dead Stock)
+    final sheetDead = excel['DeadStock'];
+    sheetDead.appendRow([
+      TextCellValue('STT'),
+      TextCellValue('Mã SKU'),
+      TextCellValue('Tên Hàng Hóa'),
+      TextCellValue('Vị Trí Kệ'),
+      TextCellValue('Số Lượng Tồn'),
+      TextCellValue('Số Ngày Chưa Xuất'),
+      TextCellValue('Giá Vốn MAC (VND)'),
+      TextCellValue('Tổng Vốn Ứ Đọng (VND)'),
+      TextCellValue('Khuyến Nghị Xử Lý'),
+    ]);
+    for (int i = 0; i < deadStockProducts.length; i++) {
+      final p = deadStockProducts[i];
+      sheetDead.appendRow([
+        IntCellValue(i + 1),
+        TextCellValue(p.skuCode),
+        TextCellValue(p.name),
+        TextCellValue(p.locationTag),
+        IntCellValue(p.currentStock),
+        IntCellValue(p.daysSinceLastMovement),
+        DoubleCellValue(p.costPrice),
+        DoubleCellValue(p.totalInventoryValue),
+        TextCellValue('Giảm giá xả hàng hoặc chuyển chi nhánh có nhu cầu cao hơn'),
+      ]);
+    }
+
+    // Sheet 3: Quản lý Hạn Dùng FEFO
+    final sheetExpiry = excel['HanDungFEFO'];
+    sheetExpiry.appendRow([
+      TextCellValue('STT'),
+      TextCellValue('Mã SKU'),
+      TextCellValue('Tên Hàng Hóa'),
+      TextCellValue('Vị Trí Kệ'),
+      TextCellValue('Số Lượng Tồn'),
+      TextCellValue('Hạn Sử Dụng'),
+      TextCellValue('Số Ngày Còn Lại'),
+      TextCellValue('Tình Trạng'),
+      TextCellValue('Biện Pháp Ưu Tiên FEFO'),
+    ]);
+    for (int i = 0; i < expiringProducts.length; i++) {
+      final p = expiringProducts[i];
+      final isExp = p.isExpired;
+      final days = DateFormatter.daysUntilExpiry(p.expiryDate);
+      sheetExpiry.appendRow([
+        IntCellValue(i + 1),
+        TextCellValue(p.skuCode),
+        TextCellValue(p.name),
+        TextCellValue(p.locationTag),
+        IntCellValue(p.currentStock),
+        TextCellValue(DateFormatter.formatDate(p.expiryDate)),
+        IntCellValue(days),
+        TextCellValue(isExp ? 'ĐÃ QUÁ HẠN' : 'CẬN DATE ($days ngày)'),
+        TextCellValue(isExp ? 'Cách ly ngay lập tức để lập biên bản hủy' : 'Áp dụng nguyên tắc FEFO: Xuất kho lô này trước'),
+      ]);
+    }
+
+    final fileBytes = excel.save();
+    if (fileBytes != null) {
+      await Printing.sharePdf(
+        bytes: Uint8List.fromList(fileBytes),
+        filename: 'BaoCao_CanhBaoKho_FEFO_${DateTime.now().millisecondsSinceEpoch}.xlsx',
       );
     }
   }
