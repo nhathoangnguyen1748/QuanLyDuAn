@@ -46,9 +46,12 @@ class HiveStorageService {
   Box<dynamic> get _settingsBox => Hive.box<dynamic>(_boxSettings);
 
   Future<void> _checkAndSeedData() async {
-    if (_productsBox.isEmpty) {
-      debugPrint('🌱 Kho rỗng, đang nạp dữ liệu Seed Data cho SmartStock Admin...');
+    const int currentSeedVersion = 2;
+    final int savedVersion = _settingsBox.get('seed_version', defaultValue: 0) as int;
+    if (_productsBox.isEmpty || savedVersion < currentSeedVersion) {
+      debugPrint('🌱 Nạp dữ liệu Bách Hóa Mai Hương cho SmartStock Admin...');
       await resetToSeedData();
+      await _settingsBox.put('seed_version', currentSeedVersion);
     }
   }
 
@@ -79,8 +82,8 @@ class HiveStorageService {
 
     // Default warehouse capacity: 2000 units
     await _settingsBox.put('warehouseCapacity', 2000);
-    await _settingsBox.put('warehouseName', 'Tổng Kho Thông Minh Miền Nam');
-    await _settingsBox.put('warehouseAddress', 'Khu Công Nghệ Cao, TP. Thủ Đức, TP.HCM');
+    await _settingsBox.put('warehouseName', 'Bách Hóa Mai Hương (SmartStock)');
+    await _settingsBox.put('warehouseAddress', '124 Hoàng Diệu 2, P. Linh Trung, TP. Thủ Đức, TP.HCM');
   }
 
   // --- PRODUCTS CRUD ---

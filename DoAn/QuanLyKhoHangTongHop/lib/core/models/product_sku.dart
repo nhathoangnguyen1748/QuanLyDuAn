@@ -11,7 +11,8 @@ class ProductSKU {
   final int minSafetyStock;
   final int maxStock;
   final String locationTag; // VD: KHO-A-KAY-03, ZONE-B-RACK-02
-  final String unit; // Cái, Hộp, Thùng, Kg, Bộ
+  final String unit; // Gói, Chai, Lon, Hộp, Thùng, Kg, Túi
+  final String? imageUrl; // Ảnh minh họa phong cách Shopee
   final DateTime? expiryDate;
   final DateTime? lastStockOutDate; // Dùng để xác định Dead Stock
   final DateTime createdAt;
@@ -30,7 +31,8 @@ class ProductSKU {
     required this.minSafetyStock,
     required this.maxStock,
     required this.locationTag,
-    this.unit = 'Cái',
+    this.unit = 'Gói',
+    this.imageUrl,
     this.expiryDate,
     this.lastStockOutDate,
     required this.createdAt,
@@ -39,6 +41,13 @@ class ProductSKU {
 
   /// Tổng giá trị vốn tồn kho của mặt hàng
   double get totalInventoryValue => currentStock * costPrice;
+
+  /// Lợi nhuận gộp trên một đơn vị (Selling Price - Cost Price)
+  double get unitGrossProfit => sellingPrice - costPrice;
+
+  /// Biên lợi nhuận gộp phần trăm ((Selling - Cost) / Selling * 100)
+  double get grossProfitMarginPercent =>
+      sellingPrice > 0 ? ((sellingPrice - costPrice) / sellingPrice) * 100 : 0.0;
 
   /// Kiểm tra cảnh báo tồn kho dưới ngưỡng an toàn
   bool get isLowStock => currentStock <= minSafetyStock;
@@ -88,6 +97,7 @@ class ProductSKU {
     int? maxStock,
     String? locationTag,
     String? unit,
+    String? imageUrl,
     DateTime? expiryDate,
     DateTime? lastStockOutDate,
     DateTime? createdAt,
@@ -107,6 +117,7 @@ class ProductSKU {
       maxStock: maxStock ?? this.maxStock,
       locationTag: locationTag ?? this.locationTag,
       unit: unit ?? this.unit,
+      imageUrl: imageUrl ?? this.imageUrl,
       expiryDate: expiryDate ?? this.expiryDate,
       lastStockOutDate: lastStockOutDate ?? this.lastStockOutDate,
       createdAt: createdAt ?? this.createdAt,
@@ -129,6 +140,7 @@ class ProductSKU {
       'maxStock': maxStock,
       'locationTag': locationTag,
       'unit': unit,
+      'imageUrl': imageUrl,
       'expiryDate': expiryDate?.toIso8601String(),
       'lastStockOutDate': lastStockOutDate?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
@@ -150,7 +162,8 @@ class ProductSKU {
       minSafetyStock: json['minSafetyStock'] as int,
       maxStock: json['maxStock'] as int,
       locationTag: json['locationTag'] as String,
-      unit: json['unit'] as String? ?? 'Cái',
+      unit: json['unit'] as String? ?? 'Gói',
+      imageUrl: json['imageUrl'] as String?,
       expiryDate: json['expiryDate'] != null
           ? DateTime.parse(json['expiryDate'] as String)
           : null,
