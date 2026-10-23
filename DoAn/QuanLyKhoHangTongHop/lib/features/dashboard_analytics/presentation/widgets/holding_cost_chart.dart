@@ -26,17 +26,22 @@ class _HoldingCostChartState extends State<HoldingCostChart> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Chi Phí Tồn Trữ & Dòng Tiền (Holding Cost)',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'So sánh Chi phí lưu kho, Hao hụt và Doanh số bán ra',
-                  style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Chi Phí Tồn Trữ & Dòng Tiền (Holding Cost)',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'So sánh Chi phí lưu kho, Hao hụt/Hư hỏng và Doanh số bán ra',
+                      style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                    ),
+                  ],
                 ),
               ],
             ),

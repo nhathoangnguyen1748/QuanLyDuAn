@@ -117,27 +117,16 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
                 const SizedBox(height: 4),
                 Text('Kệ: ${p.locationTag} • Ngành: ${p.categoryName}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight)),
                 const SizedBox(height: 8),
-                Text.rich(
-                  TextSpan(
-                    text: 'Tồn hiện tại: ',
-                    style: const TextStyle(fontSize: 12),
-                    children: [
-                      TextSpan(
-                        text: '${p.currentStock}',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.danger),
-                      ),
-                      TextSpan(
-                        text: ' / Định mức Min: ${p.minSafetyStock} ${p.unit}',
-                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
-                      ),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    Text('Tồn hiện tại: ', style: const TextStyle(fontSize: 12)),
+                    Text('${p.currentStock}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.danger)),
+                    Text(' / Định mức Min: ${p.minSafetyStock} ${p.unit}', style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight)),
+                  ],
                 ),
                 const Divider(height: 16),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
-                  runSpacing: 8,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     OutlinedButton(
                       onPressed: () {
@@ -148,6 +137,7 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
                       },
                       child: const Text('Xem chi tiết'),
                     ),
+                    const SizedBox(width: 8),
                     ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
@@ -156,7 +146,7 @@ class _SafetyStockAlertsScreenState extends ConsumerState<SafetyStockAlertsScree
                         );
                       },
                       icon: const Icon(Icons.add_shopping_cart, size: 16),
-                      label: const Text('Tạo Phiếu Nhập'),
+                      label: const Text('Tạo Phiếu Nhập Hàng'),
                     ),
                   ],
                 ),

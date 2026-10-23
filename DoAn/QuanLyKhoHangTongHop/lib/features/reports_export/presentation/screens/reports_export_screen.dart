@@ -38,11 +38,9 @@ class ReportsExportScreen extends ConsumerWidget {
                   children: [
                     Icon(Icons.print, color: Colors.white, size: 24),
                     SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Trung Tâm Xuất Báo Cáo & In Ấn',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
+                    Text(
+                      'Trung Tâm Xuất Báo Cáo & In Ấn',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ],
                 ),
@@ -210,16 +208,16 @@ class ReportsExportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 14),
-            Wrap(
-              alignment: WrapAlignment.end,
-              spacing: 8,
-              runSpacing: 8,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (secondaryButtonText != null && onSecondaryAction != null)
+                if (secondaryButtonText != null && onSecondaryAction != null) ...[
                   OutlinedButton(
                     onPressed: onSecondaryAction,
                     child: Text(secondaryButtonText),
                   ),
+                  const SizedBox(width: 8),
+                ],
                 ElevatedButton(
                   onPressed: onAction,
                   child: Text(buttonText),
