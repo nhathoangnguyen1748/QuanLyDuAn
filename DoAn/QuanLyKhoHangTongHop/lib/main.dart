@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/constants/app_theme.dart';
-import 'core/storage/hive_storage_service.dart';
-import 'features/home/presentation/screens/home_nav_screen.dart';
+import 'core/theme/app_theme.dart';
+import 'features/inventory/screens/inventory_dashboard_screen.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Khởi tạo cơ sở dữ liệu Hive offline và Seed Data
-  await HiveStorageService.instance.init();
-
-  runApp(
-    const ProviderScope(
-      child: SmartStockApp(),
-    ),
-  );
+  runApp(const QuanLyKhoApp());
 }
 
-class SmartStockApp extends StatelessWidget {
-  const SmartStockApp({super.key});
+class QuanLyKhoApp extends StatelessWidget {
+  const QuanLyKhoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SmartStock Admin',
-      debugShowCheckedModeBanner: false,
+      title: 'Quản Lý Kho Hàng Tổng Hợp',
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
-      home: const HomeNavScreen(),
+      debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        // Giới hạn TextScaler từ 0.85 đến 1.15 để ngăn vỡ khung hình khi máy phóng to font chữ
+        final mediaQueryData = MediaQuery.of(context);
+        final clampedTextScaler = mediaQueryData.textScaler.clamp(
+          minScaleFactor: 0.85,
+          maxScaleFactor: 1.15,
+        );
+
+        return MediaQuery(
+          data: mediaQueryData.copyWith(textScaler: clampedTextScaler),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: const InventoryDashboardScreen(),
     );
   }
 }

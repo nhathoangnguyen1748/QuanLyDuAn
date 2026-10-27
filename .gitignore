@@ -16,3 +16,13 @@ desktop.ini
 .idea/
 .vscode/
 *.iml
+
+# Security exclusions
+.env
+.env.*
+*.pem
+*.key
+*.cert
+id_rsa*
+__pycache__
+*.pyc
