@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum StockOutType {
   retail('Bán lẻ', 'Xuất bán khách lẻ tại quầy'),
   wholesale('Bán sỉ', 'Xuất bán buôn số lượng lớn'),
@@ -45,13 +47,13 @@ class StockOutItem {
 
   factory StockOutItem.fromJson(Map<String, dynamic> json) {
     return StockOutItem(
-      skuId: json['skuId'] as String,
-      skuCode: json['skuCode'] as String,
-      skuName: json['skuName'] as String,
-      barcode: json['barcode'] as String? ?? '',
-      quantity: json['quantity'] as int,
-      unitPrice: (json['unitPrice'] as num).toDouble(),
-      costPrice: (json['costPrice'] as num).toDouble(),
+      skuId: (json['skuId'] ?? json['sku_id'] ?? '') as String,
+      skuCode: (json['skuCode'] ?? json['sku_code'] ?? '') as String,
+      skuName: (json['skuName'] ?? json['sku_name'] ?? '') as String,
+      barcode: (json['barcode'] ?? '') as String,
+      quantity: ((json['quantity'] ?? 0) as num).toInt(),
+      unitPrice: ((json['unitPrice'] ?? json['unit_price'] ?? 0) as num).toDouble(),
+      costPrice: ((json['costPrice'] ?? json['cost_price'] ?? 0) as num).toDouble(),
     );
   }
 }
@@ -88,35 +90,48 @@ class StockOutOrder {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'orderNumber': orderNumber,
+      'order_number': orderNumber,
       'type': type.name,
-      'receiverName': receiverName,
-      'destinationBranch': destinationBranch,
+      'receiver_name': receiverName,
+      'destination_branch': destinationBranch,
       'items': items.map((i) => i.toJson()).toList(),
-      'createdAt': createdAt.toIso8601String(),
-      'createdBy': createdBy,
+      'created_at': createdAt.toIso8601String(),
+      'created_by': createdBy,
       'notes': notes,
       'status': status,
     };
   }
 
   factory StockOutOrder.fromJson(Map<String, dynamic> json) {
+    List<StockOutItem> parsedItems = [];
+    final rawItems = json['items'];
+    if (rawItems is List) {
+      for (final item in rawItems) {
+        if (item is Map) {
+          parsedItems.add(StockOutItem.fromJson(Map<String, dynamic>.from(item)));
+        } else if (item is String) {
+          parsedItems.add(StockOutItem.fromJson(jsonDecode(item) as Map<String, dynamic>));
+        }
+      }
+    }
+
+    final rawType = (json['type'] ?? 'retail') as String;
     return StockOutOrder(
-      id: json['id'] as String,
-      orderNumber: json['orderNumber'] as String,
+      id: (json['id'] ?? '') as String,
+      orderNumber: (json['order_number'] ?? json['orderNumber'] ?? '') as String,
       type: StockOutType.values.firstWhere(
-        (e) => e.name == json['type'],
+        (e) => e.name == rawType,
         orElse: () => StockOutType.retail,
       ),
-      receiverName: json['receiverName'] as String,
-      destinationBranch: json['destinationBranch'] as String?,
-      items: (json['items'] as List)
-          .map((i) => StockOutItem.fromJson(i as Map<String, dynamic>))
-          .toList(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      createdBy: json['createdBy'] as String? ?? 'Admin Kho',
+      receiverName: (json['receiver_name'] ?? json['receiverName'] ?? '') as String,
+      destinationBranch: (json['destination_branch'] ?? json['destinationBranch']) as String?,
+      items: parsedItems,
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? DateTime.parse((json['created_at'] ?? json['createdAt']) as String)
+          : DateTime.now(),
+      createdBy: (json['created_by'] ?? json['createdBy'] ?? 'Admin Kho') as String,
       notes: json['notes'] as String?,
-      status: json['status'] as String? ?? 'COMPLETED',
+      status: (json['status'] ?? 'COMPLETED') as String,
     );
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/constants/app_theme.dart';
-import 'core/storage/hive_storage_service.dart';
+import 'core/services/supabase_service.dart';
 import 'features/home/presentation/screens/home_nav_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo cơ sở dữ liệu Hive offline và Seed Data
-  await HiveStorageService.instance.init();
+  // Khởi tạo Supabase Backend Realtime
+  await SupabaseService.instance.init();
 
   runApp(
     const ProviderScope(

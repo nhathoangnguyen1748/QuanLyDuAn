@@ -128,50 +128,52 @@ class ProductSKU {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'skuCode': skuCode,
+      'sku_code': skuCode,
       'barcode': barcode,
       'name': name,
-      'categoryId': categoryId,
-      'categoryName': categoryName,
-      'costPrice': costPrice,
-      'sellingPrice': sellingPrice,
-      'currentStock': currentStock,
-      'minSafetyStock': minSafetyStock,
-      'maxStock': maxStock,
-      'locationTag': locationTag,
+      'category_id': categoryId,
+      'category_name': categoryName,
+      'cost_price': costPrice,
+      'selling_price': sellingPrice,
+      'current_stock': currentStock,
+      'min_safety_stock': minSafetyStock,
+      'max_stock': maxStock,
+      'location_tag': locationTag,
       'unit': unit,
-      'imageUrl': imageUrl,
-      'expiryDate': expiryDate?.toIso8601String(),
-      'lastStockOutDate': lastStockOutDate?.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
+      'image_url': imageUrl,
+      'expiry_date': expiryDate?.toIso8601String(),
+      'last_stock_out_date': lastStockOutDate?.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
       'notes': notes,
     };
   }
 
   factory ProductSKU.fromJson(Map<String, dynamic> json) {
     return ProductSKU(
-      id: json['id'] as String,
-      skuCode: json['skuCode'] as String,
-      barcode: json['barcode'] as String,
-      name: json['name'] as String,
-      categoryId: json['categoryId'] as String,
-      categoryName: json['categoryName'] as String? ?? 'Chung',
-      costPrice: (json['costPrice'] as num).toDouble(),
-      sellingPrice: (json['sellingPrice'] as num).toDouble(),
-      currentStock: json['currentStock'] as int,
-      minSafetyStock: json['minSafetyStock'] as int,
-      maxStock: json['maxStock'] as int,
-      locationTag: json['locationTag'] as String,
-      unit: json['unit'] as String? ?? 'Gói',
-      imageUrl: json['imageUrl'] as String?,
-      expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(json['expiryDate'] as String)
+      id: (json['id'] ?? '') as String,
+      skuCode: (json['sku_code'] ?? json['skuCode'] ?? '') as String,
+      barcode: (json['barcode'] ?? '') as String,
+      name: (json['name'] ?? '') as String,
+      categoryId: (json['category_id'] ?? json['categoryId'] ?? '') as String,
+      categoryName: (json['category_name'] ?? json['categoryName'] ?? 'Chung') as String,
+      costPrice: ((json['cost_price'] ?? json['costPrice'] ?? 0) as num).toDouble(),
+      sellingPrice: ((json['selling_price'] ?? json['sellingPrice'] ?? 0) as num).toDouble(),
+      currentStock: ((json['current_stock'] ?? json['currentStock'] ?? 0) as num).toInt(),
+      minSafetyStock: ((json['min_safety_stock'] ?? json['minSafetyStock'] ?? 0) as num).toInt(),
+      maxStock: ((json['max_stock'] ?? json['maxStock'] ?? 500) as num).toInt(),
+      locationTag: (json['location_tag'] ?? json['locationTag'] ?? '') as String,
+      unit: (json['unit'] ?? 'Gói') as String,
+      imageUrl: (json['image_url'] ?? json['imageUrl']) as String?,
+      expiryDate: (json['expiry_date'] ?? json['expiryDate']) != null
+          ? DateTime.parse((json['expiry_date'] ?? json['expiryDate']) as String)
           : null,
-      lastStockOutDate: json['lastStockOutDate'] != null
-          ? DateTime.parse(json['lastStockOutDate'] as String)
+      lastStockOutDate: (json['last_stock_out_date'] ?? json['lastStockOutDate']) != null
+          ? DateTime.parse((json['last_stock_out_date'] ?? json['lastStockOutDate']) as String)
           : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      notes: json['notes'] as String?,
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? DateTime.parse((json['created_at'] ?? json['createdAt']) as String)
+          : DateTime.now(),
+      notes: (json['notes']) as String?,
     );
   }
 }

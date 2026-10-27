@@ -362,9 +362,9 @@ class _BarcodeScannerSheetState extends State<BarcodeScannerSheet>
                   ],
                 ),
                 const SizedBox(height: 10),
-                // Quick chip suggestions from SeedData
+                // Quick chip suggestions from Supabase
                 const Text(
-                  'Mã vạch mẫu (Click để kiểm thử ngay):',
+                  'Mã vạch thực tế (Click để demo quét ngay):',
                   style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
                 ),
                 const SizedBox(height: 4),
@@ -372,13 +372,14 @@ class _BarcodeScannerSheetState extends State<BarcodeScannerSheet>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _sampleBarcodeChip('8938501230012', 'iPhone 15'),
-                      _sampleBarcodeChip('8938501230029', 'Sony TV 65"'),
-                      _sampleBarcodeChip('8938501230036', 'Dell XPS 13'),
-                      _sampleBarcodeChip('8938501230043', 'Nồi chiên Philips'),
-                      _sampleBarcodeChip('8938501230050', 'Robot Xiaomi'),
-                      _sampleBarcodeChip('8938501230074', 'Sữa TH Nut'),
-                      _sampleBarcodeChip('8938501230104', 'Nước giặt OMO'),
+                      _sampleBarcodeChip('8934563138164', 'Mì Hảo Hảo'),
+                      _sampleBarcodeChip('8936034125018', 'Gạo ST25'),
+                      _sampleBarcodeChip('8934560113110', 'Coca Cola 320ml'),
+                      _sampleBarcodeChip('8935001700018', 'Dầu Tường An 1L'),
+                      _sampleBarcodeChip('8934804005156', 'Nước mắm Nam Ngư'),
+                      _sampleBarcodeChip('8935012401821', 'Nước rửa chén Sunlight'),
+                      _sampleBarcodeChip('8935217400114', 'Sữa TH True Milk'),
+                      _sampleBarcodeChip('8850999320015', 'Bia Tiger Lon'),
                     ],
                   ),
                 ),

@@ -315,7 +315,7 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                           child: TextFormField(
                             controller: _orderNumberController,
                             decoration: const InputDecoration(
-                              labelText: 'Số Phiếu Nhập *',
+                              labelText: 'Số Phiếu *',
                               prefixIcon: Icon(Icons.receipt_outlined, size: 18),
                               isDense: true,
                             ),
@@ -329,7 +329,7 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                             controller: _supplierPhoneController,
                             keyboardType: TextInputType.phone,
                             decoration: const InputDecoration(
-                              labelText: 'SĐT Nhà Cung Cấp',
+                              labelText: 'SĐT',
                               prefixIcon: Icon(Icons.phone_outlined, size: 18),
                               isDense: true,
                             ),
@@ -341,7 +341,7 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                     TextFormField(
                       controller: _supplierNameController,
                       decoration: const InputDecoration(
-                        labelText: 'Tên Nhà Cung Cấp / Đối Tác *',
+                        labelText: 'Tên Nhà Cung Cấp *',
                         prefixIcon: Icon(Icons.business_outlined, size: 18),
                         isDense: true,
                       ),
@@ -389,32 +389,42 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.inventory_2_outlined, size: 18, color: AppColors.primary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'MẶT HÀNG NHẬP (${_draftItems.length})',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimaryLight),
-                    ),
-                  ],
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.inventory_2_outlined, size: 18, color: AppColors.primary),
+                      const SizedBox(width: 6),
+                      Text(
+                        'HÀNG NHẬP (${_draftItems.length})',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimaryLight),
+                      ),
+                    ],
+                  ),
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     TextButton.icon(
                       onPressed: _showProductPickerDialog,
-                      icon: const Icon(Icons.list, size: 18),
-                      label: const Text('Chọn từ kho'),
+                      icon: const Icon(Icons.list, size: 16),
+                      label: const Text('Chọn', style: TextStyle(fontSize: 12)),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                     ),
                     const SizedBox(width: 6),
                     ElevatedButton.icon(
                       onPressed: _scanBarcodeToAdd,
-                      icon: const Icon(Icons.qr_code_scanner, size: 16),
-                      label: const Text('Quét mã'),
+                      icon: const Icon(Icons.qr_code_scanner, size: 14),
+                      label: const Text('Quét', style: TextStyle(fontSize: 12)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                   ],
@@ -425,7 +435,7 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
 
             if (_draftItems.isEmpty)
               Container(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -442,18 +452,29 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                       ),
                       const SizedBox(height: 12),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          OutlinedButton.icon(
-                            onPressed: _showProductPickerDialog,
-                            icon: const Icon(Icons.search),
-                            label: const Text('Chọn từ danh sách'),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _showProductPickerDialog,
+                              icon: const Icon(Icons.search, size: 16),
+                              label: const Text('Chọn SKU', style: TextStyle(fontSize: 12)),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 10),
-                          ElevatedButton.icon(
-                            onPressed: _scanBarcodeToAdd,
-                            icon: const Icon(Icons.qr_code_scanner),
-                            label: const Text('Quét Barcode'),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _scanBarcodeToAdd,
+                              icon: const Icon(Icons.qr_code_scanner, size: 16),
+                              label: const Text('Quét mã', style: TextStyle(fontSize: 12)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -501,8 +522,7 @@ class _CreateStockInScreenState extends ConsumerState<CreateStockInScreen> {
                             Expanded(
                               child: Text(
                                 draft.sku.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                               ),
                             ),
                             IconButton(

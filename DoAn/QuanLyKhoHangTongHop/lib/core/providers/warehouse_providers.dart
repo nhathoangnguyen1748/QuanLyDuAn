@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product_sku.dart';
 import '../models/category_model.dart';
@@ -5,45 +7,117 @@ import '../models/stock_in_order.dart';
 import '../models/stock_out_order.dart';
 import '../models/cycle_count_session.dart';
 import '../models/analytics_models.dart';
-import '../storage/hive_storage_service.dart';
+import '../services/supabase_service.dart';
 import '../utils/inventory_math.dart';
 
-// Hive service provider
-final storageServiceProvider = Provider<HiveStorageService>((ref) {
-  return HiveStorageService.instance;
+// Supabase service provider
+final supabaseServiceProvider = Provider<SupabaseService>((ref) {
+  return SupabaseService.instance;
 });
 
-// Category List Provider
-final categoryListProvider = Provider<List<CategoryModel>>((ref) {
-  final storage = ref.watch(storageServiceProvider);
-  return storage.getAllCategories();
-});
+// Category List Notifier & Provider
+class CategoryListNotifier extends Notifier<List<CategoryModel>> {
+  StreamSubscription<List<CategoryModel>>? _sub;
+
+  @override
+  List<CategoryModel> build() {
+    _init();
+    ref.onDispose(() {
+      _sub?.cancel();
+    });
+    return [];
+  }
+
+  void _init() {
+    refresh();
+
+    _sub?.cancel();
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      _sub = supabase.streamCategories().listen((list) {
+        if (list.isNotEmpty) state = list;
+      }, onError: (e) {
+        debugPrint('Error streaming categories: $e');
+        refresh();
+      });
+    } catch (e) {
+      debugPrint('Failed to start streamCategories: $e');
+      refresh();
+    }
+  }
+
+  Future<void> refresh() async {
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      final list = await supabase.getAllCategories();
+      if (list.isNotEmpty) state = list;
+    } catch (e) {
+      debugPrint('Error refreshing categories: $e');
+    }
+  }
+}
+
+final categoryListProvider = NotifierProvider<CategoryListNotifier, List<CategoryModel>>(CategoryListNotifier.new);
 
 // Product List Notifier
 class ProductListNotifier extends Notifier<List<ProductSKU>> {
+  StreamSubscription<List<ProductSKU>>? _sub;
+
   @override
   List<ProductSKU> build() {
-    final storage = ref.watch(storageServiceProvider);
-    return storage.getAllProducts();
+    _init();
+    ref.onDispose(() {
+      _sub?.cancel();
+    });
+    return [];
   }
 
-  void refresh() {
-    final storage = ref.read(storageServiceProvider);
-    state = storage.getAllProducts();
+  void _init() {
+    refresh();
+
+    _sub?.cancel();
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      _sub = supabase.streamProducts().listen((list) {
+        if (list.isNotEmpty) state = list;
+      }, onError: (e) {
+        debugPrint('Error streaming products (falling back to REST): $e');
+        refresh();
+      });
+    } catch (e) {
+      debugPrint('Failed to start streamProducts: $e');
+      refresh();
+    }
+  }
+
+  Future<void> refresh() async {
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      final list = await supabase.getAllProducts();
+      debugPrint('Loaded ${list.length} products from Supabase');
+      if (list.isNotEmpty) state = list;
+    } catch (e) {
+      debugPrint('Error refreshing products: $e');
+    }
   }
 
   Future<void> saveProduct(ProductSKU product) async {
-    await ref.read(storageServiceProvider).saveProduct(product);
-    refresh();
+    await ref.read(supabaseServiceProvider).saveProduct(product);
+    await refresh();
   }
 
   Future<void> deleteProduct(String id) async {
-    await ref.read(storageServiceProvider).deleteProduct(id);
-    refresh();
+    await ref.read(supabaseServiceProvider).deleteProduct(id);
+    await refresh();
   }
 
   ProductSKU? findByBarcode(String barcode) {
-    return ref.read(storageServiceProvider).getProductByBarcode(barcode);
+    for (final p in state) {
+      if (p.barcode == barcode || p.skuCode == barcode) {
+        return p;
+      }
+    }
+    return null;
   }
 }
 
@@ -51,21 +125,49 @@ final productListProvider = NotifierProvider<ProductListNotifier, List<ProductSK
 
 // Stock In Orders Notifier
 class StockInListNotifier extends Notifier<List<StockInOrder>> {
+  StreamSubscription<List<StockInOrder>>? _sub;
+
   @override
   List<StockInOrder> build() {
-    final storage = ref.watch(storageServiceProvider);
-    return storage.getAllStockInOrders();
+    _init();
+    ref.onDispose(() {
+      _sub?.cancel();
+    });
+    return [];
   }
 
-  void refresh() {
-    final storage = ref.read(storageServiceProvider);
-    state = storage.getAllStockInOrders();
+  void _init() {
+    refresh();
+
+    _sub?.cancel();
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      _sub = supabase.streamStockInOrders().listen((list) {
+        if (list.isNotEmpty) state = list;
+      }, onError: (e) {
+        debugPrint('Error streaming stock in orders: $e');
+        refresh();
+      });
+    } catch (e) {
+      debugPrint('Failed to start streamStockInOrders: $e');
+      refresh();
+    }
+  }
+
+  Future<void> refresh() async {
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      final list = await supabase.getAllStockInOrders();
+      if (list.isNotEmpty) state = list;
+    } catch (e) {
+      debugPrint('Error refreshing stock in orders: $e');
+    }
   }
 
   Future<void> addOrder(StockInOrder order) async {
-    await ref.read(storageServiceProvider).saveStockInOrder(order);
-    refresh();
-    ref.read(productListProvider.notifier).refresh();
+    await ref.read(supabaseServiceProvider).saveStockInOrder(order);
+    await refresh();
+    await ref.read(productListProvider.notifier).refresh();
   }
 }
 
@@ -73,21 +175,49 @@ final stockInListProvider = NotifierProvider<StockInListNotifier, List<StockInOr
 
 // Stock Out Orders Notifier
 class StockOutListNotifier extends Notifier<List<StockOutOrder>> {
+  StreamSubscription<List<StockOutOrder>>? _sub;
+
   @override
   List<StockOutOrder> build() {
-    final storage = ref.watch(storageServiceProvider);
-    return storage.getAllStockOutOrders();
+    _init();
+    ref.onDispose(() {
+      _sub?.cancel();
+    });
+    return [];
   }
 
-  void refresh() {
-    final storage = ref.read(storageServiceProvider);
-    state = storage.getAllStockOutOrders();
+  void _init() {
+    refresh();
+
+    _sub?.cancel();
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      _sub = supabase.streamStockOutOrders().listen((list) {
+        if (list.isNotEmpty) state = list;
+      }, onError: (e) {
+        debugPrint('Error streaming stock out orders: $e');
+        refresh();
+      });
+    } catch (e) {
+      debugPrint('Failed to start streamStockOutOrders: $e');
+      refresh();
+    }
+  }
+
+  Future<void> refresh() async {
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      final list = await supabase.getAllStockOutOrders();
+      if (list.isNotEmpty) state = list;
+    } catch (e) {
+      debugPrint('Error refreshing stock out orders: $e');
+    }
   }
 
   Future<void> addOrder(StockOutOrder order) async {
-    await ref.read(storageServiceProvider).saveStockOutOrder(order);
-    refresh();
-    ref.read(productListProvider.notifier).refresh();
+    await ref.read(supabaseServiceProvider).saveStockOutOrder(order);
+    await refresh();
+    await ref.read(productListProvider.notifier).refresh();
   }
 }
 
@@ -95,26 +225,54 @@ final stockOutListProvider = NotifierProvider<StockOutListNotifier, List<StockOu
 
 // Cycle Count List Notifier
 class CycleCountListNotifier extends Notifier<List<CycleCountSession>> {
+  StreamSubscription<List<CycleCountSession>>? _sub;
+
   @override
   List<CycleCountSession> build() {
-    final storage = ref.watch(storageServiceProvider);
-    return storage.getAllCycleCounts();
+    _init();
+    ref.onDispose(() {
+      _sub?.cancel();
+    });
+    return [];
   }
 
-  void refresh() {
-    final storage = ref.read(storageServiceProvider);
-    state = storage.getAllCycleCounts();
+  void _init() {
+    refresh();
+
+    _sub?.cancel();
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      _sub = supabase.streamCycleCounts().listen((list) {
+        if (list.isNotEmpty) state = list;
+      }, onError: (e) {
+        debugPrint('Error streaming cycle counts: $e');
+        refresh();
+      });
+    } catch (e) {
+      debugPrint('Failed to start streamCycleCounts: $e');
+      refresh();
+    }
+  }
+
+  Future<void> refresh() async {
+    try {
+      final supabase = ref.read(supabaseServiceProvider);
+      final list = await supabase.getAllCycleCounts();
+      if (list.isNotEmpty) state = list;
+    } catch (e) {
+      debugPrint('Error refreshing cycle counts: $e');
+    }
   }
 
   Future<void> saveSession(CycleCountSession session) async {
-    await ref.read(storageServiceProvider).saveCycleCount(session);
-    refresh();
+    await ref.read(supabaseServiceProvider).saveCycleCount(session);
+    await refresh();
   }
 
   Future<void> reconcile(String sessionId) async {
-    await ref.read(storageServiceProvider).reconcileCycleCount(sessionId);
-    refresh();
-    ref.read(productListProvider.notifier).refresh();
+    await ref.read(supabaseServiceProvider).reconcileCycleCount(sessionId);
+    await refresh();
+    await ref.read(productListProvider.notifier).refresh();
   }
 }
 
@@ -133,11 +291,10 @@ class WarehouseSettings {
 }
 
 final warehouseSettingsProvider = Provider<WarehouseSettings>((ref) {
-  final storage = ref.watch(storageServiceProvider);
-  return WarehouseSettings(
-    name: storage.getWarehouseName(),
-    address: storage.getWarehouseAddress(),
-    capacity: storage.getWarehouseCapacity(),
+  return const WarehouseSettings(
+    name: 'Bách Hóa Mai Hương (SmartStock)',
+    address: '124 Hoàng Diệu 2, P. Linh Trung, TP. Thủ Đức, TP.HCM',
+    capacity: 2000,
   );
 });
 

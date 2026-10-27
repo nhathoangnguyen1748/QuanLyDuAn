@@ -50,7 +50,7 @@ class ShopeeProductCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                   child: AspectRatio(
-                    aspectRatio: 1.15,
+                    aspectRatio: 1.25,
                     child: product.imageUrl != null && product.imageUrl!.isNotEmpty
                         ? Image.network(
                             product.imageUrl!,
@@ -62,8 +62,8 @@ class ShopeeProductCard extends StatelessWidget {
                                 color: const Color(0xFFFAFAFA),
                                 child: const Center(
                                   child: SizedBox(
-                                    width: 20,
-                                    height: 20,
+                                    width: 18,
+                                    height: 18,
                                     child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
                                   ),
                                 ),
@@ -75,21 +75,20 @@ class ShopeeProductCard extends StatelessWidget {
                 ),
                 // Shopee Mall / Official Badge
                 Positioned(
-                  top: 6,
-                  left: 6,
+                  top: 5,
+                  left: 5,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
                     decoration: BoxDecoration(
                       color: AppColors.shopeeMallRed,
-                      borderRadius: BorderRadius.circular(3),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                     child: const Text(
                       'BÁCH HÓA',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 8.5,
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.3,
                       ),
                     ),
                   ),
@@ -97,13 +96,13 @@ class ShopeeProductCard extends StatelessWidget {
                 // Expiry or Low Stock Badge
                 if (product.isLowStock || product.isExpiringSoon || product.isExpired)
                   Positioned(
-                    top: 6,
-                    right: 6,
+                    top: 5,
+                    right: 5,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
                       decoration: BoxDecoration(
                         color: product.isExpired || product.isLowStock ? AppColors.danger : AppColors.warning,
-                        borderRadius: BorderRadius.circular(3),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
                         product.isExpired
@@ -113,7 +112,7 @@ class ShopeeProductCard extends StatelessWidget {
                                 : 'CẬN DATE',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 8.5,
+                          fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -123,121 +122,124 @@ class ShopeeProductCard extends StatelessWidget {
             ),
 
             // Product Details
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product Name (2 Lines, Ellipsis, Shopee Typography)
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimaryLight,
-                      height: 1.25,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(7.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Product Name (Clean, full display without ...)
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimaryLight,
+                        height: 1.25,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
 
-                  // Location Tag & Unit
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF0FDF4),
-                          border: Border.all(color: const Color(0xFF86EFAC), width: 0.5),
-                          borderRadius: BorderRadius.circular(3),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Location Tag & Unit
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF0FDF4),
+                                border: Border.all(color: const Color(0xFF86EFAC), width: 0.5),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: Text(
+                                product.locationTag,
+                                style: const TextStyle(
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF166534),
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              'ĐVT: ${product.unit}',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          product.locationTag,
-                          style: const TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF166534),
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        'ĐVT: ${product.unit}',
-                        style: const TextStyle(
-                          fontSize: 9.5,
-                          color: AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
+                        const SizedBox(height: 4),
 
-                  // Selling Price (Shopee Signature Orange)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      const Text(
-                        '₫',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.shopeePrice,
+                        // Selling Price
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            const Text(
+                              '₫',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.shopeePrice,
+                              ),
+                            ),
+                            Text(
+                              CurrencyFormatter.formatNumber(product.sellingPrice),
+                              style: const TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.shopeePrice,
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: AppColors.shopeeBadgeBg,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                              child: Text(
+                                '+${product.grossProfitMarginPercent.toStringAsFixed(0)}%',
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 1),
-                      Text(
-                        CurrencyFormatter.formatNumber(product.sellingPrice),
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.shopeePrice,
-                        ),
-                      ),
-                      const Spacer(),
-                      // Profit percentage tag
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: AppColors.shopeeBadgeBg,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        child: Text(
-                          '+${product.grossProfitMarginPercent.toStringAsFixed(0)}%',
-                          style: const TextStyle(
-                            fontSize: 8.5,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 3),
+                        const SizedBox(height: 2),
 
-                  // Cost price & Stock quantity
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Vốn: ${CurrencyFormatter.formatCompactVND(product.costPrice)}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textMutedLight,
+                        // Cost price & Stock quantity
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Vốn: ${CurrencyFormatter.formatCompactVND(product.costPrice)}',
+                              style: const TextStyle(
+                                fontSize: 9.5,
+                                color: AppColors.textMutedLight,
+                              ),
+                            ),
+                            Text(
+                              'Kho: ${product.currentStock}',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: product.isLowStock ? AppColors.danger : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        'Kho: ${product.currentStock}',
-                        style: TextStyle(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.bold,
-                          color: product.isLowStock ? AppColors.danger : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -255,14 +257,14 @@ class ShopeeProductCard extends StatelessWidget {
           children: [
             Icon(
               _getCategoryIcon(product.categoryId),
-              size: 38,
+              size: 32,
               color: AppColors.primary.withValues(alpha: 0.75),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               product.categoryName,
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 8.5,
                 fontWeight: FontWeight.w600,
                 color: AppColors.primary.withValues(alpha: 0.8),
               ),

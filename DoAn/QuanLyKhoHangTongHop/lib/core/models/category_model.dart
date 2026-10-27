@@ -18,7 +18,7 @@ class CategoryModel {
       'id': id,
       'code': code,
       'name': name,
-      'colorHex': colorHex,
+      'color_hex': colorHex,
       'description': description,
     };
   }
@@ -28,7 +28,7 @@ class CategoryModel {
       id: json['id'] as String,
       code: json['code'] as String,
       name: json['name'] as String,
-      colorHex: json['colorHex'] as int,
+      colorHex: (json['color_hex'] ?? json['colorHex'] ?? 4008740141) as int,
       description: json['description'] as String?,
     );
   }

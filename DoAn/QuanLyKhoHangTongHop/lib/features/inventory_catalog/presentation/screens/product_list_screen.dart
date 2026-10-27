@@ -72,12 +72,12 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: const Text('Bách Hóa Mai Hương', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+        title: const Text('Bách Hóa Mai Hương', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         elevation: 0,
         actions: [
           // Toggle View: Grid vs List
           IconButton(
-            tooltip: _isGridView ? 'Xem danh sách' : 'Xem dạng lưới Shopee',
+            tooltip: _isGridView ? 'Xem danh sách' : 'Xem dạng lưới',
             icon: Icon(_isGridView ? Icons.view_list_rounded : Icons.grid_view_rounded, color: Colors.white),
             onPressed: () => setState(() => _isGridView = !_isGridView),
           ),
@@ -96,12 +96,12 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
       ),
       body: Column(
         children: [
-          // Shopee-style Search Header
+          // Search Header
           Container(
             color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
             child: Container(
-              height: 42,
+              height: 40,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(6),
@@ -115,30 +115,30 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
               ),
               child: TextField(
                 controller: _searchController,
-                style: const TextStyle(fontSize: 13, color: AppColors.textPrimaryLight),
+                style: const TextStyle(fontSize: 12.5, color: AppColors.textPrimaryLight),
                 decoration: InputDecoration(
-                  hintText: 'Tìm kiếm sản phẩm, mã vạch, vị trí kệ...',
-                  hintStyle: const TextStyle(fontSize: 12.5, color: AppColors.textMutedLight),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.primary, size: 20),
+                  hintText: 'Tìm sản phẩm, barcode, kệ...',
+                  hintStyle: const TextStyle(fontSize: 12, color: AppColors.textMutedLight),
+                  prefixIcon: const Icon(Icons.search, color: AppColors.primary, size: 19),
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (_searchQuery.isNotEmpty)
                         IconButton(
-                          icon: const Icon(Icons.clear, size: 18, color: Colors.grey),
+                          icon: const Icon(Icons.clear, size: 16, color: Colors.grey),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');
                           },
                         ),
                       Container(
-                        height: 20,
+                        height: 18,
                         width: 1,
                         color: Colors.grey.shade300,
                       ),
                       IconButton(
-                        tooltip: 'Quét Barcode Camera',
-                        icon: const Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 20),
+                        tooltip: 'Quét Barcode',
+                        icon: const Icon(Icons.camera_alt_outlined, color: AppColors.primary, size: 19),
                         onPressed: () async {
                           final barcode = await BarcodeScannerSheet.scan(context);
                           if (barcode != null && barcode.isNotEmpty) {
@@ -154,7 +154,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
                 ),
                 onChanged: (val) => setState(() => _searchQuery = val.trim()),
               ),
@@ -164,12 +164,12 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           // Horizontal Category Filter
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 6),
             child: SizedBox(
-              height: 34,
+              height: 32,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 children: [
                   _buildCategoryChip('Tất cả ngành hàng', null),
                   ...categories.map((c) => _buildCategoryChip(c.name, c.id)),
@@ -181,16 +181,16 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           // Status Filter Tabs
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 6),
             child: SizedBox(
-              height: 30,
+              height: 28,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 children: [
                   _buildStatusChip('Tất cả', 'ALL'),
                   _buildStatusChip('Cần nhập hàng', 'LOW_STOCK', color: AppColors.danger),
-                  _buildStatusChip('Cận date (FEFO)', 'EXPIRING', color: AppColors.warning),
+                  _buildStatusChip('Cận date', 'EXPIRING', color: AppColors.warning),
                   _buildStatusChip('Chậm bán', 'DEAD_STOCK', color: AppColors.accentAmber),
                 ],
               ),
@@ -201,17 +201,17 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
 
           // Summary Info Bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Hiển thị: ${filtered.length} / ${products.length} sản phẩm',
-                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: AppColors.textSecondaryLight),
+                  '${filtered.length}/${products.length} sản phẩm',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondaryLight),
                 ),
                 Text(
                   'Tổng vốn: ${CurrencyFormatter.formatCompactVND(filtered.fold(0.0, (s, p) => s + p.totalInventoryValue))}',
-                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.primary),
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary),
                 ),
               ],
             ),
@@ -224,9 +224,9 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.shopping_bag_outlined, size: 56, color: Colors.grey),
-                        const SizedBox(height: 8),
-                        const Text('Không tìm thấy sản phẩm phù hợp', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                        const Icon(Icons.shopping_bag_outlined, size: 48, color: Colors.grey),
+                        const SizedBox(height: 6),
+                        const Text('Không tìm thấy sản phẩm phù hợp', style: TextStyle(color: Colors.grey, fontSize: 12)),
                         if (_searchQuery.isNotEmpty || _selectedCategoryId != null || _selectedFilter != 'ALL')
                           TextButton(
                             onPressed: () {
@@ -237,19 +237,19 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                                 _selectedFilter = 'ALL';
                               });
                             },
-                            child: const Text('Xóa toàn bộ bộ lọc', style: TextStyle(color: AppColors.primary)),
+                            child: const Text('Xóa bộ lọc', style: TextStyle(color: AppColors.primary, fontSize: 12)),
                           ),
                       ],
                     ),
                   )
                 : _isGridView
                     ? GridView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.68,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.58,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
                         ),
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {
@@ -257,7 +257,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                         },
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {
                           return _buildProductListItem(filtered[index]);
@@ -273,8 +273,8 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             MaterialPageRoute(builder: (_) => const ProductFormScreen()),
           );
         },
-        icon: const Icon(Icons.add, size: 20),
-        label: const Text('Thêm Sản Phẩm Mới', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        icon: const Icon(Icons.add, size: 18),
+        label: const Text('Thêm Sản Phẩm', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
@@ -286,13 +286,13 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     return Padding(
       padding: const EdgeInsets.only(right: 6.0),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         onTap: () => setState(() => _selectedCategoryId = categoryId),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.shopeeBadgeBg : const Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isSelected ? AppColors.primary : Colors.transparent,
               width: 1,
@@ -301,7 +301,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               color: isSelected ? AppColors.primary : AppColors.textPrimaryLight,
             ),
@@ -320,7 +320,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
         borderRadius: BorderRadius.circular(4),
         onTap: () => setState(() => _selectedFilter = code),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           decoration: BoxDecoration(
             color: isSelected ? chipColor : const Color(0xFFF9F9F9),
             borderRadius: BorderRadius.circular(4),
@@ -332,7 +332,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 10.5,
+              fontSize: 10,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected ? Colors.white : (color ?? AppColors.textSecondaryLight),
             ),
@@ -345,8 +345,9 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   Widget _buildProductListItem(ProductSKU p) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      elevation: 1,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         onTap: () {
           Navigator.push(
             context,
@@ -354,16 +355,15 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(9.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product mini image
               ClipRRect(
                 borderRadius: BorderRadius.circular(6),
                 child: SizedBox(
-                  width: 70,
-                  height: 70,
+                  width: 65,
+                  height: 65,
                   child: p.imageUrl != null && p.imageUrl!.isNotEmpty
                       ? Image.network(
                           p.imageUrl!,
@@ -373,51 +373,50 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                       : _buildListFallbackIcon(),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 9),
 
-              // Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          margin: const EdgeInsets.only(top: 1),
                           decoration: BoxDecoration(
                             color: AppColors.shopeeMallRed,
                             borderRadius: BorderRadius.circular(2),
                           ),
-                          child: const Text('BÁCH HÓA', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+                          child: const Text('BÁCH HÓA', style: TextStyle(color: Colors.white, fontSize: 7.5, fontWeight: FontWeight.bold)),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 5),
                         Expanded(
                           child: Text(
                             p.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, height: 1.25),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
-                      'Mã: ${p.skuCode} • Vị trí: ${p.locationTag}',
-                      style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondaryLight),
+                      'SKU: ${p.skuCode} • Kệ: ${p.locationTag}',
+                      style: const TextStyle(fontSize: 10, color: AppColors.textSecondaryLight),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '₫${CurrencyFormatter.formatNumber(p.sellingPrice)}',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.shopeePrice),
+                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.shopeePrice),
                         ),
                         Text(
-                          'Tồn: ${p.currentStock} ${p.unit}',
+                          'Kho: ${p.currentStock} ${p.unit}',
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: p.isLowStock ? AppColors.danger : AppColors.primary,
                           ),
@@ -438,7 +437,7 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
     return Container(
       color: AppColors.shopeeBadgeBg,
       child: const Center(
-        child: Icon(Icons.shopping_bag_outlined, color: AppColors.primary, size: 28),
+        child: Icon(Icons.shopping_bag_outlined, color: AppColors.primary, size: 26),
       ),
     );
   }

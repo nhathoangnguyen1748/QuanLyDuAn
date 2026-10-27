@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum CycleCountStatus {
   inProgress('Đang kiểm kê'),
   completed('Đã hoàn tất kiểm đếm'),
@@ -66,15 +68,15 @@ class CycleCountItem {
 
   factory CycleCountItem.fromJson(Map<String, dynamic> json) {
     return CycleCountItem(
-      skuId: json['skuId'] as String,
-      skuCode: json['skuCode'] as String,
-      skuName: json['skuName'] as String,
-      barcode: json['barcode'] as String? ?? '',
-      locationTag: json['locationTag'] as String,
-      bookStock: json['bookStock'] as int,
-      physicalCount: json['physicalCount'] as int? ?? 0,
-      costPrice: (json['costPrice'] as num).toDouble(),
-      isAudited: json['isAudited'] as bool? ?? false,
+      skuId: (json['skuId'] ?? json['sku_id'] ?? '') as String,
+      skuCode: (json['skuCode'] ?? json['sku_code'] ?? '') as String,
+      skuName: (json['skuName'] ?? json['sku_name'] ?? '') as String,
+      barcode: (json['barcode'] ?? '') as String,
+      locationTag: (json['locationTag'] ?? json['location_tag'] ?? '') as String,
+      bookStock: ((json['bookStock'] ?? json['book_stock'] ?? 0) as num).toInt(),
+      physicalCount: ((json['physicalCount'] ?? json['physical_count'] ?? 0) as num).toInt(),
+      costPrice: ((json['costPrice'] ?? json['cost_price'] ?? 0) as num).toDouble(),
+      isAudited: (json['isAudited'] ?? json['is_audited'] ?? false) as bool,
     );
   }
 }
@@ -119,36 +121,49 @@ class CycleCountSession {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'sessionCode': sessionCode,
+      'session_code': sessionCode,
       'title': title,
       'scope': scope,
       'status': status.name,
       'items': items.map((i) => i.toJson()).toList(),
-      'createdAt': createdAt.toIso8601String(),
-      'completedAt': completedAt?.toIso8601String(),
-      'auditorName': auditorName,
+      'created_at': createdAt.toIso8601String(),
+      'completed_at': completedAt?.toIso8601String(),
+      'auditor_name': auditorName,
       'notes': notes,
     };
   }
 
   factory CycleCountSession.fromJson(Map<String, dynamic> json) {
+    List<CycleCountItem> parsedItems = [];
+    final rawItems = json['items'];
+    if (rawItems is List) {
+      for (final item in rawItems) {
+        if (item is Map) {
+          parsedItems.add(CycleCountItem.fromJson(Map<String, dynamic>.from(item)));
+        } else if (item is String) {
+          parsedItems.add(CycleCountItem.fromJson(jsonDecode(item) as Map<String, dynamic>));
+        }
+      }
+    }
+
+    final rawStatus = (json['status'] ?? 'inProgress') as String;
     return CycleCountSession(
-      id: json['id'] as String,
-      sessionCode: json['sessionCode'] as String,
-      title: json['title'] as String,
-      scope: json['scope'] as String,
+      id: (json['id'] ?? '') as String,
+      sessionCode: (json['session_code'] ?? json['sessionCode'] ?? '') as String,
+      title: (json['title'] ?? '') as String,
+      scope: (json['scope'] ?? 'Toàn kho') as String,
       status: CycleCountStatus.values.firstWhere(
-        (e) => e.name == json['status'],
+        (e) => e.name == rawStatus,
         orElse: () => CycleCountStatus.inProgress,
       ),
-      items: (json['items'] as List)
-          .map((i) => CycleCountItem.fromJson(i as Map<String, dynamic>))
-          .toList(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      completedAt: json['completedAt'] != null
-          ? DateTime.parse(json['completedAt'] as String)
+      items: parsedItems,
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? DateTime.parse((json['created_at'] ?? json['createdAt']) as String)
+          : DateTime.now(),
+      completedAt: (json['completed_at'] ?? json['completedAt']) != null
+          ? DateTime.parse((json['completed_at'] ?? json['completedAt']) as String)
           : null,
-      auditorName: json['auditorName'] as String? ?? 'Admin Kho',
+      auditorName: (json['auditor_name'] ?? json['auditorName'] ?? 'Admin Kho') as String,
       notes: json['notes'] as String?,
     );
   }

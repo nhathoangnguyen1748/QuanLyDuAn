@@ -37,20 +37,23 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Phân Tích ABC (Nguyên Lý Pareto 80/20)',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Tỷ trọng doanh thu theo từng nhóm hàng hóa',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Phân Tích ABC (Pareto)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Tỷ trọng doanh thu theo nhóm hàng',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -58,7 +61,7 @@ class _ABCParetoChartState extends State<ABCParetoChart> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text(
-                    '80 / 15 / 5 Rule',
+                    'Quy luật 80/20',
                     style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary),
                   ),
                 ),

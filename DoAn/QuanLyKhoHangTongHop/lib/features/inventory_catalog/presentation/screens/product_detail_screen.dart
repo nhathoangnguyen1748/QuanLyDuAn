@@ -47,7 +47,7 @@ class ProductDetailScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: Text(product.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: const Text('Chi tiết sản phẩm'),
         actions: [
           IconButton(
             tooltip: 'In tem nhãn mã vạch',
@@ -311,9 +311,9 @@ class ProductDetailScreen extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar: Container(
-        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
+          color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),

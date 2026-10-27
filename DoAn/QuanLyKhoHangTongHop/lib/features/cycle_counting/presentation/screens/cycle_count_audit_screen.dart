@@ -367,9 +367,9 @@ class _CycleCountAuditScreenState extends ConsumerState<CycleCountAuditScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Kệ: ${item.locationTag}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight)),
-                              Text('Sổ sách: ${item.bookStock}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                              Text('Sổ: ${item.bookStock}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
                               Text(
-                                'Thực tế: ${item.isAudited ? item.physicalCount : "Chưa kiểm"}',
+                                'Thực: ${item.isAudited ? item.physicalCount : "--"}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

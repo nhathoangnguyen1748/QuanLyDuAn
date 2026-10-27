@@ -231,7 +231,6 @@ class _StockInListScreenState extends ConsumerState<StockInListScreen> {
                                       child: Text(
                                         order.supplierName,
                                         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -310,16 +309,17 @@ class _StockInListScreenState extends ConsumerState<StockInListScreen> {
         children: [
           Icon(icon, color: Colors.white70, size: 16),
           const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
           Text(
             label,

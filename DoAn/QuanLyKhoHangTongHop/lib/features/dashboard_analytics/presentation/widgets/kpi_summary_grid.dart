@@ -23,20 +23,20 @@ class KPISummaryGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _buildKpiCard(
-                title: 'Tổng Giá Trị Tồn Kho',
+                title: 'Tổng Giá Trị',
                 value: CurrencyFormatter.formatCompactVND(kpi.totalInventoryValue),
-                subtitle: '${CurrencyFormatter.formatNumber(kpi.totalUnits)} đơn vị (${kpi.totalSKUs} SKU)',
+                subtitle: '${kpi.totalUnits} đơn vị • ${kpi.totalSKUs} SKU',
                 icon: Icons.account_balance_wallet,
                 color: AppColors.primary,
                 context: context,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: _buildKpiCard(
-                title: 'Tỷ Lệ Lấp Đầy Kho',
+                title: 'Tỷ Lệ Lấp Đầy',
                 value: CurrencyFormatter.formatPercent(kpi.warehouseUtilizationRate),
-                subtitle: '${kpi.totalUnits}/${kpi.totalCapacityUnits} vị trí lưu trữ',
+                subtitle: '${kpi.totalUnits}/${kpi.totalCapacityUnits} vị trí',
                 icon: Icons.warehouse,
                 color: kpi.warehouseUtilizationRate > 85 ? AppColors.warning : AppColors.accent,
                 progress: kpi.warehouseUtilizationRate / 100,
@@ -45,26 +45,26 @@ class KPISummaryGrid extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
               child: _buildKpiCard(
-                title: 'Dưới Mức An Toàn',
+                title: 'Cần Nhập Hàng',
                 value: '${kpi.lowStockCount} SKU',
-                subtitle: kpi.lowStockCount > 0 ? 'Cần bổ sung nhập hàng gấp' : 'Tồn kho ổn định',
+                subtitle: kpi.lowStockCount > 0 ? 'Dưới mức an toàn' : 'Tồn kho ổn định',
                 icon: Icons.warning_amber_rounded,
                 color: kpi.lowStockCount > 0 ? AppColors.danger : AppColors.success,
                 onTap: onLowStockTap,
                 context: context,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: _buildKpiCard(
-                title: 'Tồn Kho Chậm Luân Chuyển',
+                title: 'Hàng Chậm Bán',
                 value: '${kpi.deadStockCount} SKU',
-                subtitle: 'Không xuất trong >60 ngày',
+                subtitle: '>60 ngày chưa xuất',
                 icon: Icons.hourglass_bottom_rounded,
                 color: kpi.deadStockCount > 0 ? AppColors.accentAmber : AppColors.textSecondaryLight,
                 onTap: onDeadStockTap,
@@ -90,14 +90,14 @@ class KPISummaryGrid extends StatelessWidget {
     final theme = Theme.of(context);
     return Material(
       color: theme.cardColor,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: onTap != null ? color.withValues(alpha: 0.3) : AppColors.borderLight,
               width: 1,
@@ -110,49 +110,47 @@ class KPISummaryGrid extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(7),
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(icon, color: color, size: 20),
+                    child: Icon(icon, color: color, size: 18),
                   ),
                   if (onTap != null)
-                    Icon(Icons.arrow_forward_ios, size: 12, color: color),
+                    Icon(Icons.arrow_forward_ios, size: 11, color: color),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight, fontWeight: FontWeight.w500),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondaryLight, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              const SizedBox(height: 3),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  value,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
+                ),
               ),
               if (progress != null) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: 5),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress.clamp(0.0, 1.0),
                     backgroundColor: Colors.grey.shade200,
                     valueColor: AlwaysStoppedAnimation<Color>(color),
-                    minHeight: 5,
+                    minHeight: 4,
                   ),
                 ),
               ],
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: const TextStyle(fontSize: 10, color: AppColors.textMutedLight),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 9.5, color: AppColors.textMutedLight),
               ),
             ],
           ),

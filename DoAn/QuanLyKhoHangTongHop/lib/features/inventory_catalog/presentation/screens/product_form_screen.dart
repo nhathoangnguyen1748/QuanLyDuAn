@@ -74,7 +74,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
   Future<void> _scanBarcode() async {
     final barcode = await BarcodeScannerSheet.scan(
       context,
-      title: 'Quét Barcode cho mặt hàng',
+      title: 'Quét Barcode mặt hàng',
     );
     if (barcode != null && barcode.isNotEmpty) {
       setState(() {
@@ -168,8 +168,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   child: TextFormField(
                     controller: _skuCodeController,
                     decoration: const InputDecoration(
-                      labelText: 'Mã Quản Lý (SKU Code) *',
-                      hintText: 'VD: SKU-ELC-001',
+                      labelText: 'Mã SKU *',
+                      hintText: 'SKU-001',
                     ),
                     validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc nhập SKU' : null,
                   ),
@@ -179,12 +179,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   child: TextFormField(
                     controller: _barcodeController,
                     decoration: InputDecoration(
-                      labelText: 'Mã Vạch Barcode *',
+                      labelText: 'Mã vạch *',
                       hintText: 'EAN-13 / Code 128',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
                         onPressed: _scanBarcode,
-                        tooltip: 'Quét mã vạch camera',
+                        tooltip: 'Quét Barcode',
                       ),
                     ),
                     validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc có Barcode' : null,
@@ -197,16 +197,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Tên Mặt Hàng / Sản Phẩm *',
-                hintText: 'VD: Điện thoại iPhone 15 Pro Max 256GB',
+                labelText: 'Tên Sản Phẩm *',
+                hintText: 'Nhập tên hàng hóa...',
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc nhập tên sản phẩm' : null,
+              validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc nhập tên' : null,
             ),
             const SizedBox(height: 12),
 
             DropdownButtonFormField<String>(
               initialValue: _selectedCategoryId,
-              decoration: const InputDecoration(labelText: 'Ngành Hàng / Danh Mục'),
+              decoration: const InputDecoration(labelText: 'Ngành Hàng'),
               items: categories.map((c) {
                 return DropdownMenuItem(
                   value: c.id,
@@ -222,29 +222,31 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             const SizedBox(height: 20),
 
             // Vị trí lưu kho & Đơn vị tính
-            const Text('VỊ TRÍ LƯU TRỮ & ĐƠN VỊ TÍNH', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
+            const Text('VỊ TRÍ & ĐƠN VỊ TÍNH', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
             const SizedBox(height: 8),
 
             Row(
               children: [
                 Expanded(
+                  flex: 2,
                   child: TextFormField(
                     controller: _locationTagController,
                     decoration: const InputDecoration(
-                      labelText: 'Vị Trí Kệ (Aisle/Rack/Bin) *',
-                      hintText: 'VD: KHO-A-KAY-03',
+                      labelText: 'Vị Trí Kệ',
+                      hintText: 'KỆ-01-02',
                       prefixIcon: Icon(Icons.place, size: 18),
                     ),
-                    validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc có vị trí kệ' : null,
+                    validator: (v) => v == null || v.trim().isEmpty ? 'Bắt buộc vị trí kệ' : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
+                  flex: 1,
                   child: TextFormField(
                     controller: _unitController,
                     decoration: const InputDecoration(
-                      labelText: 'Đơn Vị Tính',
-                      hintText: 'Cái, Thùng, Hộp, Can...',
+                      labelText: 'ĐVT',
+                      hintText: 'Hộp, Gói...',
                     ),
                   ),
                 ),
@@ -253,7 +255,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             const SizedBox(height: 20),
 
             // Định mức số lượng tồn kho
-            const Text('ĐỊNH MỨC SỐ LƯỢNG TỒN TRỮ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
+            const Text('ĐỊNH MỨC TỒN KHO', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
             const SizedBox(height: 8),
 
             Row(
@@ -263,7 +265,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     controller: _currentStockController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Tồn Kho Hiện Tại',
+                      labelText: 'Tồn Kho',
                       hintText: '0',
                     ),
                   ),
@@ -274,7 +276,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     controller: _minStockController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Tồn Min An Toàn',
+                      labelText: 'Tồn Min',
                       hintText: '10',
                     ),
                   ),
@@ -285,7 +287,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     controller: _maxStockController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Sức Chứa Max',
+                      labelText: 'Tồn Max',
                       hintText: '100',
                     ),
                   ),
@@ -305,7 +307,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     controller: _costPriceController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Giá Vốn MAC (Nhập)',
+                      labelText: 'Giá Vốn Nhập',
                       suffixText: '₫',
                     ),
                   ),
@@ -316,7 +318,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     controller: _sellingPriceController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      labelText: 'Giá Bán Lẻ Đề Xuất',
+                      labelText: 'Giá Bán Lẻ',
                       suffixText: '₫',
                     ),
                   ),
@@ -326,7 +328,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             const SizedBox(height: 20),
 
             // Hạn sử dụng (FEFO) & Ghi chú
-            const Text('QUẢN LÝ HẠN DÙNG (FEFO) & GHI CHÚ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
+            const Text('HẠN DÙNG (FEFO) & GHI CHÚ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondaryLight)),
             const SizedBox(height: 8),
 
             InkWell(
@@ -334,7 +336,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               borderRadius: BorderRadius.circular(12),
               child: InputDecorator(
                 decoration: InputDecoration(
-                  labelText: 'Hạn Sử Dụng (Nếu có - Quản lý theo FEFO)',
+                  labelText: 'Hạn Sử Dụng (FEFO)',
                   suffixIcon: _selectedExpiryDate != null
                       ? IconButton(
                           icon: const Icon(Icons.clear, size: 18),
@@ -358,8 +360,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               controller: _notesController,
               maxLines: 2,
               decoration: const InputDecoration(
-                labelText: 'Ghi Chú SKU (Tùy chọn)',
-                hintText: 'Nhà cung cấp chính, đặc tính bảo quản...',
+                labelText: 'Ghi Chú',
+                hintText: 'Đặc tính bảo quản, nhà phân phối...',
               ),
             ),
             const SizedBox(height: 32),

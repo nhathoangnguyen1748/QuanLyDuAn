@@ -246,10 +246,9 @@ class StockOutDetailScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Số lượng xuất: ${CurrencyFormatter.formatNumber(item.quantity)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                        Text('Đơn giá: ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12)),
+                        Text('SL: ${CurrencyFormatter.formatNumber(item.quantity)} x ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                         Text(
-                          'Thành tiền: ${CurrencyFormatter.formatVND(item.totalRevenue)}',
+                          CurrencyFormatter.formatVND(item.totalRevenue),
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
                         ),
                       ],
@@ -266,12 +265,12 @@ class StockOutDetailScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Giá vốn (COGS): ${CurrencyFormatter.formatVND(item.totalCogs)}',
+                            'Vốn: ${CurrencyFormatter.formatVND(item.totalCogs)}',
                             style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
                           ),
                           if (order.type != StockOutType.transfer) ...[
                             Text(
-                              'Lãi gộp: ${CurrencyFormatter.formatVND(item.profit)}',
+                              'Lãi: ${CurrencyFormatter.formatVND(item.profit)}',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,

@@ -33,7 +33,7 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
             Row(
               children: [
                 const Text(
-                  'SmartStock Admin',
+                  'SmartStock',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(width: 6),
@@ -44,7 +44,7 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
-                    'ONLINE',
+                    'REALTIME',
                     style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.success),
                   ),
                 ),
@@ -52,7 +52,7 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
             ),
             Text(
               settings.name,
-              style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+              style: const TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
             ),
           ],
         ),
@@ -92,46 +92,35 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
               await ExcelExportService.exportInventory(products);
             },
           ),
-          // Reset demo data menu
-          PopupMenuButton<String>(
-            onSelected: (val) async {
-              if (val == 'reset') {
-                await ref.read(storageServiceProvider).resetToSeedData();
-                ref.read(productListProvider.notifier).refresh();
-                ref.read(stockInListProvider.notifier).refresh();
-                ref.read(stockOutListProvider.notifier).refresh();
-                ref.read(cycleCountListProvider.notifier).refresh();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Đã khôi phục dữ liệu mẫu thành công!')),
-                  );
-                }
+          // Realtime Refresh
+          IconButton(
+            tooltip: 'Đồng bộ Realtime',
+            icon: const Icon(Icons.sync, color: AppColors.primary),
+            onPressed: () async {
+              await ref.read(productListProvider.notifier).refresh();
+              await ref.read(categoryListProvider.notifier).refresh();
+              await ref.read(stockInListProvider.notifier).refresh();
+              await ref.read(stockOutListProvider.notifier).refresh();
+              await ref.read(cycleCountListProvider.notifier).refresh();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Đã đồng bộ dữ liệu mới nhất từ Supabase!')),
+                );
               }
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'reset',
-                child: Row(
-                  children: [
-                    Icon(Icons.restore, size: 18, color: Colors.orange),
-                    SizedBox(width: 8),
-                    Text('Khôi phục Seed Data'),
-                  ],
-                ),
-              ),
-            ],
           ),
         ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.read(productListProvider.notifier).refresh();
-          ref.read(stockInListProvider.notifier).refresh();
-          ref.read(stockOutListProvider.notifier).refresh();
-          ref.read(cycleCountListProvider.notifier).refresh();
+          await ref.read(productListProvider.notifier).refresh();
+          await ref.read(categoryListProvider.notifier).refresh();
+          await ref.read(stockInListProvider.notifier).refresh();
+          await ref.read(stockOutListProvider.notifier).refresh();
+          await ref.read(cycleCountListProvider.notifier).refresh();
         },
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           children: [
             // 1. Executive KPI Cards
             KPISummaryGrid(
@@ -151,23 +140,23 @@ class AnalyticsDashboardScreen extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // 2. Phân Tích ABC Pareto (80/20)
+            // 2. Phân Tích ABC Pareto
             ABCParetoChart(paretoResult: pareto),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // 3. Vòng Quay Hàng Tồn Kho (ITR)
+            // 3. Vòng Quay Tồn Kho (ITR)
             ITRTrendChart(trendData: itr),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // 4. Chi Phí Lưu Kho & Dòng Tiền (Holding Cost)
+            // 4. Chi Phí Lưu Kho
             HoldingCostChart(dataPoints: holdingCost),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // 5. Cơ Cấu Danh Mục Hàng Hóa (Donut Chart)
+            // 5. Cơ Cấu Danh Mục (Donut Chart)
             CategoryDonutChart(categories: categoryDist),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
           ],
         ),
       ),

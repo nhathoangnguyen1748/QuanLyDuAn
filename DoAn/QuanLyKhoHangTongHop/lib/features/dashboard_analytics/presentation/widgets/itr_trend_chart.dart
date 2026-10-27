@@ -30,22 +30,24 @@ class _ITRTrendChartState extends State<ITRTrendChart> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hệ Số Vòng Quay Tồn Kho (ITR)',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'ITR = Giá vốn hàng bán (COGS) / Tồn kho bình quân',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Vòng Quay Tồn Kho (ITR)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'ITR = COGS / Tồn kho bình quân',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondaryLight),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(

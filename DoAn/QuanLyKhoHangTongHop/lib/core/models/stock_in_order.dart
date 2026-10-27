@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class StockInItem {
   final String skuId;
   final String skuCode;
@@ -42,17 +44,17 @@ class StockInItem {
 
   factory StockInItem.fromJson(Map<String, dynamic> json) {
     return StockInItem(
-      skuId: json['skuId'] as String,
-      skuCode: json['skuCode'] as String,
-      skuName: json['skuName'] as String,
-      barcode: json['barcode'] as String? ?? '',
-      quantity: json['quantity'] as int,
-      unitPrice: (json['unitPrice'] as num).toDouble(),
-      locationTag: json['locationTag'] as String,
-      currentCostBefore: (json['currentCostBefore'] as num).toDouble(),
-      macAfter: (json['macAfter'] as num).toDouble(),
-      expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(json['expiryDate'] as String)
+      skuId: (json['skuId'] ?? json['sku_id'] ?? '') as String,
+      skuCode: (json['skuCode'] ?? json['sku_code'] ?? '') as String,
+      skuName: (json['skuName'] ?? json['sku_name'] ?? '') as String,
+      barcode: (json['barcode'] ?? '') as String,
+      quantity: ((json['quantity'] ?? 0) as num).toInt(),
+      unitPrice: ((json['unitPrice'] ?? json['unit_price'] ?? 0) as num).toDouble(),
+      locationTag: (json['locationTag'] ?? json['location_tag'] ?? '') as String,
+      currentCostBefore: ((json['currentCostBefore'] ?? json['current_cost_before'] ?? 0) as num).toDouble(),
+      macAfter: ((json['macAfter'] ?? json['mac_after'] ?? 0) as num).toDouble(),
+      expiryDate: (json['expiryDate'] ?? json['expiry_date']) != null
+          ? DateTime.parse((json['expiryDate'] ?? json['expiry_date']) as String)
           : null,
     );
   }
@@ -87,30 +89,42 @@ class StockInOrder {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'orderNumber': orderNumber,
-      'supplierName': supplierName,
-      'supplierPhone': supplierPhone,
+      'order_number': orderNumber,
+      'supplier_name': supplierName,
+      'supplier_phone': supplierPhone,
       'items': items.map((i) => i.toJson()).toList(),
-      'createdAt': createdAt.toIso8601String(),
-      'createdBy': createdBy,
+      'created_at': createdAt.toIso8601String(),
+      'created_by': createdBy,
       'notes': notes,
       'status': status,
     };
   }
 
   factory StockInOrder.fromJson(Map<String, dynamic> json) {
+    List<StockInItem> parsedItems = [];
+    final rawItems = json['items'];
+    if (rawItems is List) {
+      for (final item in rawItems) {
+        if (item is Map) {
+          parsedItems.add(StockInItem.fromJson(Map<String, dynamic>.from(item)));
+        } else if (item is String) {
+          parsedItems.add(StockInItem.fromJson(jsonDecode(item) as Map<String, dynamic>));
+        }
+      }
+    }
+
     return StockInOrder(
-      id: json['id'] as String,
-      orderNumber: json['orderNumber'] as String,
-      supplierName: json['supplierName'] as String,
-      supplierPhone: json['supplierPhone'] as String?,
-      items: (json['items'] as List)
-          .map((i) => StockInItem.fromJson(i as Map<String, dynamic>))
-          .toList(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      createdBy: json['createdBy'] as String? ?? 'Admin Kho',
+      id: (json['id'] ?? '') as String,
+      orderNumber: (json['order_number'] ?? json['orderNumber'] ?? '') as String,
+      supplierName: (json['supplier_name'] ?? json['supplierName'] ?? '') as String,
+      supplierPhone: (json['supplier_phone'] ?? json['supplierPhone']) as String?,
+      items: parsedItems,
+      createdAt: json['created_at'] != null || json['createdAt'] != null
+          ? DateTime.parse((json['created_at'] ?? json['createdAt']) as String)
+          : DateTime.now(),
+      createdBy: (json['created_by'] ?? json['createdBy'] ?? 'Admin Kho') as String,
       notes: json['notes'] as String?,
-      status: json['status'] as String? ?? 'COMPLETED',
+      status: (json['status'] ?? 'COMPLETED') as String,
     );
   }
 }

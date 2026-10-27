@@ -247,10 +247,9 @@ class StockInDetailScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Số lượng: ${CurrencyFormatter.formatNumber(item.quantity)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                        Text('Đơn giá nhập: ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12)),
+                        Text('SL: ${CurrencyFormatter.formatNumber(item.quantity)} x ${CurrencyFormatter.formatVND(item.unitPrice)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                         Text(
-                          'Thành tiền: ${CurrencyFormatter.formatVND(item.totalAmount)}',
+                          CurrencyFormatter.formatVND(item.totalAmount),
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
                         ),
                       ],
